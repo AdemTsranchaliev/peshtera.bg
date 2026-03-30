@@ -2,6 +2,7 @@ import { useState } from 'react';
 import {
   Box,
   Button,
+  Container,
   ListItemText,
   Menu,
   MenuItem,
@@ -163,20 +164,28 @@ export default function PrimaryNav() {
       square
       sx={{
         bgcolor: pz.navGreen,
-        display: 'flex',
-        flexWrap: 'wrap',
-        alignItems: 'stretch',
-        px: { md: 1, lg: 2 },
-        py: 0,
-        gap: 0,
         borderTop: `1px solid rgba(255,255,255,0.12)`,
         boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.06)',
       }}
       aria-label="Основна навигация"
     >
-      {navTree.map((item) => (
-        <TopNavEntry key={item.id} item={item} />
-      ))}
+      <Container
+        maxWidth="lg"
+        disableGutters={false}
+        sx={{
+          display: 'flex',
+          flexWrap: 'wrap',
+          alignItems: 'stretch',
+          justifyContent: 'center',
+          px: { md: 2, lg: 3 },
+          py: 0,
+          gap: { md: 0.25, lg: 0.5 },
+        }}
+      >
+        {navTree.map((item) => (
+          <TopNavEntry key={item.id} item={item} />
+        ))}
+      </Container>
     </Paper>
   );
 }

@@ -18,7 +18,7 @@ export default function App() {
           <Route path="novini" element={<NewsPage />} />
           <Route path="kontakti" element={<ContactPage />} />
           <Route path="karta-na-saita" element={<SitemapPage />} />
-          <Route path="razdel/:slug" element={<ContentPage />} />
+          <Route path="razdel/*" element={<ContentPage />} />
         </Route>
       </Routes>
     </ThemeProvider>
