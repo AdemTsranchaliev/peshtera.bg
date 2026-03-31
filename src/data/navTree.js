@@ -309,6 +309,7 @@ export const navTree = [
         id: 'buyer',
         label: 'Профил на купувача',
         path: '/razdel/profil-kupuvach',
+        externalUrl: 'https://app.eop.bg/buyer/10652',
         children: [
           { id: 'buy-pre', label: 'Преди м. юни 2020 г.', path: '/razdel/profil-kupuvach/do-yuni-2020' },
           { id: 'buy-post', label: 'След м. юни 2020 г.', path: '/razdel/profil-kupuvach/sled-yuni-2020' },
@@ -348,5 +349,4 @@ export const navTree = [
       { id: 'aud', label: 'Аудио', path: '/razdel/audio' },
     ],
   },
-  { id: 'sitemap', label: 'Карта на сайта', path: '/karta-na-saita' },
 ];

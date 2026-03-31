@@ -15,7 +15,7 @@ export default function App() {
       <Routes>
         <Route path="/" element={<MainLayout />}>
           <Route index element={<HomePage />} />
-          <Route path="novini" element={<NewsPage />} />
+          <Route path="novini/*" element={<NewsPage />} />
           <Route path="kontakti" element={<ContactPage />} />
           <Route path="karta-na-saita" element={<SitemapPage />} />
           <Route path="razdel/*" element={<ContentPage />} />

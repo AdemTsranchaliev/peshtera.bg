@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { Outlet, useLocation } from 'react-router-dom';
 import {
   AppBar,
@@ -24,7 +25,7 @@ function Crumbs() {
   if (pathname === '/') return null;
 
   const node = pathToNav.get(pathname);
-  const isNews = pathname === '/novini';
+  const isNews = pathname === '/novini' || pathname.startsWith('/novini/');
   const isContact = pathname === '/kontakti';
   const isMap = pathname === '/karta-na-saita';
 
@@ -57,6 +58,12 @@ function Crumbs() {
 }
 
 export default function MainLayout() {
+  const { pathname } = useLocation();
+
+  useEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
+  }, [pathname]);
+
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh', bgcolor: 'background.default' }}>
       <SkipLink />
@@ -140,24 +147,20 @@ export default function MainLayout() {
                     }}
                   >
                     <Box
+                      component="img"
+                      src="/logo-peshtera.png"
+                      alt="Герб на Община Пещера"
                       sx={{
                         width: 56,
                         height: 56,
                         borderRadius: 1,
-                        bgcolor: pz.councilBtn,
-                        border: `2px solid ${pz.accentGold}`,
-                        color: pz.accentGold,
-                        display: 'grid',
-                        placeItems: 'center',
-                        fontFamily: '"Exo 2", sans-serif',
-                        fontWeight: 800,
-                        fontSize: '1.35rem',
+                        objectFit: 'contain',
                         flexShrink: 0,
+                        bgcolor: pz.white,
+                        p: 0.25,
+                        border: `2px solid ${pz.accentGold}`,
                       }}
-                      aria-hidden
-                    >
-                      П
-                    </Box>
+                    />
                     <Box sx={{ lineHeight: 1.25 }}>
                       <Typography
                         variant="h6"

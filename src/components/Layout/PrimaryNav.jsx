@@ -12,7 +12,7 @@ import {
   useMediaQuery,
 } from '@mui/material';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
-import { Link as RouterLink, useNavigate } from 'react-router-dom';
+import { Link as RouterLink } from 'react-router-dom';
 import { useTheme } from '@mui/material/styles';
 import { navTree } from '../../data/navigation';
 import { navLinkTo } from '../../utils/navLinkTo';
@@ -54,14 +54,17 @@ function SubMenu({ anchorEl, open, onClose, items, title }) {
 }
 
 function NavBranch({ node, onNavigate, depth = 0 }) {
-  const navigate = useNavigate();
   const hasChildren = node.children?.length > 0;
+  const externalUrl = node.externalUrl;
 
   if (!hasChildren) {
     return (
       <MenuItem
-        component={RouterLink}
-        to={navLinkTo(node)}
+        component={externalUrl ? 'a' : RouterLink}
+        to={externalUrl ? undefined : navLinkTo(node)}
+        href={externalUrl}
+        target={externalUrl ? '_blank' : undefined}
+        rel={externalUrl ? 'noopener noreferrer' : undefined}
         onClick={onNavigate}
         sx={{
           pl: 2 + depth * 2,
@@ -81,10 +84,7 @@ function NavBranch({ node, onNavigate, depth = 0 }) {
   return (
     <>
       <MenuItem
-        onClick={() => {
-          navigate(node.path);
-          onNavigate();
-        }}
+        onClick={(e) => e.preventDefault()}
         sx={{
           pl: 2 + depth * 2,
           py: 1.25,
@@ -96,9 +96,7 @@ function NavBranch({ node, onNavigate, depth = 0 }) {
       >
         <ListItemText
           primary={node.label}
-          secondary={depth ? null : 'Преглед на раздела'}
           primaryTypographyProps={{ variant: 'body2', fontWeight: 700 }}
-          secondaryTypographyProps={{ variant: 'caption' }}
         />
       </MenuItem>
       {node.children.map((c) => (
@@ -111,7 +109,8 @@ function NavBranch({ node, onNavigate, depth = 0 }) {
 function TopNavEntry({ item }) {
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
-  const hasChildren = item.children?.length > 0;
+  const hasChildren = item.children?.length > 0 && item.id !== 'gallery';
+  const externalUrl = item.externalUrl;
 
   const close = () => setAnchorEl(null);
 
@@ -119,8 +118,11 @@ function TopNavEntry({ item }) {
     <Box>
       <Button
         color="inherit"
-        component={hasChildren ? 'button' : RouterLink}
-        to={hasChildren ? undefined : item.path}
+        component={hasChildren ? 'button' : externalUrl ? 'a' : RouterLink}
+        to={hasChildren || externalUrl ? undefined : item.path}
+        href={externalUrl}
+        target={externalUrl ? '_blank' : undefined}
+        rel={externalUrl ? 'noopener noreferrer' : undefined}
         onClick={hasChildren ? (e) => setAnchorEl(e.currentTarget) : undefined}
         endIcon={hasChildren ? <ArrowDropDownIcon sx={{ opacity: 0.85 }} /> : null}
         sx={{

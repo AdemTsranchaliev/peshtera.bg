@@ -1,10 +1,15 @@
 import { useEffect, useMemo, useState } from 'react';
-import { Box, Button, CircularProgress, Container, Divider, Link, Stack, TextField, Typography } from '@mui/material';
+import { Box, Button, Chip, CircularProgress, Container, Dialog, DialogContent, Divider, IconButton, Link, MenuItem, Stack, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, Typography } from '@mui/material';
 import { Link as RouterLink, useLocation, Navigate } from 'react-router-dom';
-import { pathToNav, OFFICIAL_SITE } from '../data/navigation';
-import { getPageContent, OFFICIAL_SITEMAP_URL } from '../data/siteContent';
+import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
+import ChevronRightIcon from '@mui/icons-material/ChevronRight';
+import CloseIcon from '@mui/icons-material/Close';
+import { pathToNav } from '../data/navigation';
+import { getPageContent } from '../data/siteContent';
 import municipalityMirrorPaths from '../data/municipalityMirrorPaths.js';
 import declarations35Data from '../data/declarations35.json';
+import administrationContacts from '../data/administrationContacts.js';
+import { tenders2025 } from '../data/tenders2025.js';
 
 const mirrorSx = {
   '& .componentheading': {
@@ -23,9 +28,103 @@ const mirrorSx = {
 
 export default function ContentPage() {
   const { pathname } = useLocation();
-  const node = pathToNav.get(pathname);
+  const electionsPages = [
+    {
+      slug: 'chastichni-mestni-izbori-2025-kapitan-dimitrievo',
+      title: 'Частични местни избори 2025 - с.Капитан Димитриево',
+      articleCount: 5,
+      category: 'izbori',
+      summary: 'Информация, график и съобщения за частичните местни избори през 2025 г. за с. Капитан Димитриево.',
+    },
+    {
+      slug: 'izbori-ns-19-april-2026',
+      title: 'Избори за Народно събрание 19 април 2026 г',
+      articleCount: 6,
+      category: 'izbori',
+      summary: 'Всички материали, срокове и административни указания за изборите за Народно събрание на 19.04.2026 г.',
+    },
+  ];
+  const electionSlugMatch = pathname.match(/^\/razdel\/izbori\/([^/]+)$/);
+  const electionSlug = electionSlugMatch?.[1];
+  const electionDetail = electionSlug ? electionsPages.find((e) => e.slug === electionSlug) : null;
+  const electronicHelpVideos = [
+    'Вход в "Моето пространство" с Мобилен КЕП Евротръст',
+    'Вход в "Моето пространство" с Мобилен КЕП Борика',
+    '"Моето пространство" през мобилно устройство',
+    'Регистрация в "Моето пространство" на Egov.bg на физическо лице',
+    'Как да използваме електронни административни услуги',
+    'Инструкция за регистрация на юридическо лице в Системата за сигурно е-връчване (ССЕВ)',
+    'Как се извършват плащания за електронни услуги през "Моето пространство" на Egov.bg',
+  ];
+  const electronicServicesRows = [
+    ['Гражданска регистрация и актосъставяне', '1', '1997', 'Издаване на удостоверение за настоящ адрес при вече регистриран настоящ адрес', 'Ниво IV', 'високо'],
+    ['Гражданска регистрация и актосъставяне', '2', '2000', 'Издаване на многоезично извлечение от акт за гражданско състояние', 'Ниво IV', 'високо'],
+    ['Гражданска регистрация и актосъставяне', '3', '2016', 'Издаване на удостоверение за наследници', 'Ниво IV', 'високо'],
+    ['Гражданска регистрация и актосъставяне', '4', '2017', 'Издаване на удостоверение за сключване на брак от български гражданин в чужбина', 'Ниво IV', 'високо'],
+    ['Гражданска регистрация и актосъставяне', '5', '2020', 'Издаване на заверен препис или копие от личен регистрационен картон или страница от семейния регистър на населението', 'Ниво III', 'високо'],
+    ['Гражданска регистрация и актосъставяне', '6', '2033', 'Възстановяване или промяна на име', 'Ниво III', 'високо'],
+    ['Гражданска регистрация и актосъставяне', '7', '2034', 'Издаване на препис-извлечение от акт за смърт за втори и следващ път', 'Ниво IV', 'значително'],
+    ['Гражданска регистрация и актосъставяне', '8', '2036', 'Издаване на удостоверение за съпруг/а и родствени връзки', 'Ниво IV', 'високо'],
+    ['Гражданска регистрация и актосъставяне', '9', '2037', 'Издаване на удостоверение за сключен граждански брак - дубликат', 'Ниво IV', 'високо'],
+    ['Гражданска регистрация и актосъставяне', '10', '2038', 'Издаване на удостоверение за липса на съставен акт за гражданско състояние (акт за раждане, акт за смърт)', 'Ниво IV', 'високо'],
+    ['Зелена система', '33', '1996', 'Издаване на разрешение за отсичане на над 5 броя дървета и на лозя над 1 декар', '', 'ниско'],
+    ['Зелена система', '34', '2031', 'Издаване на разрешение за отсичане на дълготрайни декоративни дървета и дървета с историческо значение', 'Ниво IV', 'ниско'],
+    ['Избори', '38', '3303', 'Вписване в избирателния списък по настоящ адрес', '', 'ниско'],
+    ['Избори', '39', '3304', 'Вписване в списъка за гласуване с подвижна избирателна кутия', '', 'ниско'],
+    ['Избори', '40', '3305', 'Вписване в избирателния списък', '', 'високо'],
+    ['Избори', '41', '3306', 'Отстраняване на непълноти и грешки в избирателния списък', '', 'високо'],
+    ['Избори', '42', '3307', 'Изключване от Списъка на заличените лица', '', 'високо'],
+    ['Избори', '43', '3308', 'Изключване от Списъка на заличените лица на избирател, заявил, че ще гласува извън страната', '', 'високо'],
+    ['Кадастър', '44', '2099', 'Справки (устни и писмени) от кадастралните планове и разписните списъци към тях', 'Ниво I', 'ниско'],
+    ['Местни данъци и такси', '51', '1998', 'Издаване на удостоверение за наличие или липса на задължения по Закона за местните данъци и такси', 'Ниво IV', 'високо'],
+    ['Местни данъци и такси', '61', '9401', 'Данъчна декларация по чл.14 от ЗМДТ за облагане с данък върху недвижимите имоти', '', 'значително'],
+    ['Общинска собственост', '78', '1988', 'Издаване на удостоверение за отписване на имот от актовите книги за имотите - общинска собственост', 'Ниво IV', 'значително'],
+    ['Реклама', '91', '2100', 'Издаване на разрешение за поставяне на рекламно-информационни елементи', 'Ниво IV', 'ниско'],
+    ['Селско стопанство и екология', '92', '2006', 'Измерване, кубиране и маркиране на дървесина, добита извън горския фонд', 'Ниво III', 'ниско'],
+    ['Транспорт', '99', '2012', 'Издаване на карта за безплатно паркиране на МПС, обслужващо хора с трайни увреждания', 'Ниво II', 'значително'],
+    ['Търговия, туризъм, транспорт', '102', '357', 'Прекратяване на правата, произтичащи от удостоверение за регистрация за извършване на таксиметров превоз на пътници', '', 'високо'],
+    ['Услуги предоставяни от всички администрации', '121', '2', 'Предоставяне на достъп до обществена информация', 'Ниво IV', ''],
+    ['Устройство на територията', '124', '1986', 'Разрешаване изработването на план-извадка от подробен устройствен план', 'Ниво IV', 'значително'],
+    ['Устройство на територията', '155', '2519', 'Издаване на заверен препис от решение на Общински експертен съвет', 'Ниво I', 'ниско'],
+  ];
+  const energyContracts = [
+    ['Договор № BG16RFOP001-2.001-0010-C01 - „Повишаване на енергийна ефективност на жилищни сгради в гр. Пещера – ЛОТ 1“', 'https://www.peshtera.bg/index.php?option=com_content&view=category&layout=blog&id=47&Itemid=176'],
+    ['Договор № BG16RFOP001-2.001-0114-С01 - „Повишаване на енергийна ефективност на жилищни сгради в гр. Пещера - ЛОТ 2“', 'https://www.peshtera.bg/index.php?option=com_content&view=category&layout=blog&id=49&Itemid=176'],
+    ['Договор № BG16RFOP001-2.001-0134-C01 - „Повишаване на енергийна ефективност на жилищни сгради в гр. Пещера – ЛОТ 3“', 'https://www.peshtera.bg/index.php?option=com_content&view=category&layout=blog&id=50&Itemid=176'],
+    ['Договор № BG16RFOP001-2.001-0124-C01 - „Повишаване на енергийна ефективност на жилищни сгради в гр. Пещера – ЛОТ 4“', 'https://www.peshtera.bg/index.php?option=com_content&view=category&layout=blog&id=51&Itemid=176'],
+    ['Договор № BG16RFOP001-2.001-0139-C01 - „Повишаване на енергийна ефективност на жилищни сгради в гр. Пещера – ЛОТ 5“', 'https://www.peshtera.bg/index.php?option=com_content&view=category&layout=blog&id=52&Itemid=176'],
+    ['Договор № BG16RFOP001-2.001-0004-C01 - „Повишаване на енергийна ефективност на публична общинска сграда: Общинска администрация гр. Пещера“', 'https://www.peshtera.bg/index.php?option=com_content&view=category&layout=blog&id=53&Itemid=176'],
+    ['Договор № BG16RFOP001-2.001-0111-C01 - „Повишаване на енергийна ефективност на общинска публична сграда: Ритуална зала, гр. Пещера“', 'https://www.peshtera.bg/index.php?option=com_content&view=category&layout=blog&id=55&Itemid=176'],
+    ['Договор № BG16RFOP001-2.001-0005-C01 - „Повишаване на енергийна ефективност на публично държавна сграда: РСПБЗН и РПУ в гр. Пещера“', 'https://www.peshtera.bg/index.php?option=com_content&view=category&layout=blog&id=56&Itemid=176'],
+    ['Договор № BG16RFOP001-2.001-0007-C01 - „Повишаване на енергийна ефективност на публично общинска сграда: Общински детски комплекс“', 'https://www.peshtera.bg/index.php?option=com_content&view=category&layout=blog&id=54&Itemid=176'],
+    ['Договор № BG16RFOP001-2.002-0028-C01 - „Повишаване на енергийната ефективност на социални и жилищни сгради, находящи се в гр. Пещера - II“', 'https://www.peshtera.bg/index.php?option=com_content&view=section&id=11&Itemid=176'],
+  ];
+  const energyReports = [
+    ['Годишен отчет - Възобновяеми източници и биогорива (ОПНИЕВИБГ)', 'https://www.peshtera.bg/index.php?option=com_content&view=article&id=7018:-2023&catid=145:opnievibg&Itemid=176'],
+    ['Годишен отчет - изпълнение на плановете по чл.12 от ЗЕЕ', 'https://www.peshtera.bg/index.php?option=com_content&view=article&id=5281:2019-11-14-13-36-47&catid=146:zee&Itemid=176'],
+  ];
+  const energyDownloads = [
+    ['Регистрационен формуляр.сключени договори.doc', 'https://www.peshtera.bg/attachments/article/4048/Регистрационен формуляр.сключени договори.doc', '166 KB'],
+    ['Прессъобщение (press.doc)', 'https://www.peshtera.bg/attachments/article/3987/press.doc', '169 KB'],
+    ['Прессъобщение (press1.doc)', 'https://www.peshtera.bg/attachments/article/3988/press1.doc', '179 KB'],
+    ['Прессъобщение (press2.doc)', 'https://www.peshtera.bg/attachments/article/3989/press2.doc', '164 KB'],
+    ['Прессъобщение (press3_20161101.doc)', 'https://www.peshtera.bg/attachments/article/3999/press3_20161101.doc', '173 KB'],
+  ];
+  const tenderSlugMatch = pathname.match(/^\/razdel\/targove-konkursi\/([^/]+)$/);
+  const tenderSlug = tenderSlugMatch?.[1];
+  const tenderDetail = tenderSlug ? tenders2025.find((t) => t.slug === tenderSlug) : null;
+  const node =
+    pathToNav.get(pathname) ??
+    (tenderDetail ? pathToNav.get('/razdel/targove-konkursi') : null) ??
+    (electionDetail ? pathToNav.get('/razdel/izbori') : null);
   const [mirrorEntry, setMirrorEntry] = useState(undefined);
   const [declarationsSearch, setDeclarationsSearch] = useState('');
+  const [copyFeedback, setCopyFeedback] = useState('');
+  const [adminContactsSearch, setAdminContactsSearch] = useState('');
+  const [tendersSearch, setTendersSearch] = useState('');
+  const [tendersYear, setTendersYear] = useState('all');
+  const [galleryLightbox, setGalleryLightbox] = useState(null);
+  const [galleryFilter, setGalleryFilter] = useState('all');
 
   useEffect(() => {
     let cancelled = false;
@@ -50,19 +149,80 @@ export default function ContentPage() {
     return <Navigate to="/" replace />;
   }
 
-  const { title, paragraphs, bullets } = getPageContent(pathname, node);
+  if (tenderSlug && !tenderDetail) {
+    return <Navigate to="/razdel/targove-konkursi" replace />;
+  }
+  if (electionSlug && !electionDetail) {
+    return <Navigate to="/razdel/izbori" replace />;
+  }
+
+  const isTenderDetailPage = Boolean(tenderDetail);
+  const isElectionDetailPage = Boolean(electionDetail);
+  let { title, paragraphs, bullets } = getPageContent(pathname, node);
+  if (isTenderDetailPage && tenderDetail) {
+    title = tenderDetail.title;
+  } else if (isElectionDetailPage && electionDetail) {
+    title = electionDetail.title;
+  }
   const showMirror = mirrorEntry?.html;
   const mirrorLoading = mirrorEntry === undefined;
   const isMayorPage = pathname === '/razdel/kmet';
+  const isCouncilChairPage = pathname === '/razdel/os-predsedatel';
   const isDeputyPage = pathname === '/razdel/zam-kmetove';
   const isSecretaryPage = pathname === '/razdel/sekretar';
   const isVillagePage = pathname === '/razdel/kmetove-kmetstva';
   const isStructurePage = pathname === '/razdel/struktura-administratsiya';
+  const isCouncilGeneralPage = pathname === '/razdel/os-obshta-informatsiya';
+  const isCouncilMembersPage = pathname === '/razdel/os-savetnitsi';
+  const isBankAccountsPage = pathname === '/razdel/bankovi-smetki';
+  const isAdminContactsPage = pathname === '/razdel/vrazka-obshtinska-administratsiya';
+  const isSchoolsContactsPage = pathname === '/razdel/vrazka-uchilishta-dg';
+  const isMunicipalEnterprisesPage = pathname === '/razdel/vrazka-obshtinski-predpriyatiya';
+  const isGeoLocationPage = pathname === '/razdel/mestopolozhenie';
+  const isHistoryPage = pathname === '/razdel/istoriya';
+  const isCulturePage = pathname === '/razdel/kultura';
+  const isGalleryPage = pathname === '/razdel/galeriya';
+  const isEducationPage = pathname === '/razdel/obrazovanie';
+  const isTourismPage = pathname === '/razdel/turizam';
+  const isEnergyEfficiencyPage = pathname === '/razdel/energiyna-efektivnost';
+  const isTendersPage = pathname === '/razdel/targove-konkursi';
+  const isElectionsPage = pathname === '/razdel/izbori';
+  const isElectronicServicesPage = pathname === '/razdel/elektronski-uslugi';
+  const isPublicRegistersPage = pathname === '/razdel/os-publichni-registri';
+  const isMunicipalPlansPage = pathname === '/razdel/obshtinski-planove';
   const isDeclarations35Page = pathname === '/razdel/deklaratsii-35';
   const isDeclarations49Page = pathname === '/razdel/deklaratsii-49';
   const isProgramPage = pathname === '/razdel/programa-kmet';
   const hasCustomLayout =
-    isMayorPage || isDeputyPage || isSecretaryPage || isVillagePage || isStructurePage || isDeclarations35Page || isDeclarations49Page || isProgramPage;
+    isMayorPage ||
+    isCouncilChairPage ||
+    isDeputyPage ||
+    isSecretaryPage ||
+    isVillagePage ||
+    isStructurePage ||
+    isCouncilGeneralPage ||
+    isCouncilMembersPage ||
+    isBankAccountsPage ||
+    isAdminContactsPage ||
+    isSchoolsContactsPage ||
+    isMunicipalEnterprisesPage ||
+    isGeoLocationPage ||
+    isHistoryPage ||
+    isCulturePage ||
+    isGalleryPage ||
+    isEducationPage ||
+    isTourismPage ||
+    isEnergyEfficiencyPage ||
+    isTendersPage ||
+    isElectionsPage ||
+    isElectronicServicesPage ||
+    isPublicRegistersPage ||
+    isMunicipalPlansPage ||
+    isTenderDetailPage ||
+    isElectionDetailPage ||
+    isDeclarations35Page ||
+    isDeclarations49Page ||
+    isProgramPage;
   const mayor = {
     name: 'Йордан Стоянов Младенов',
     title: 'Кмет на Община Пещера',
@@ -70,6 +230,67 @@ export default function ContentPage() {
     phones: ['0350/6-22-01'],
     emails: ['y.mladenov@peshtera.bg', 'mayor@peshtera.bg'],
     reception: 'Всеки понеделник, 14:00 - 17:00',
+  };
+  const councilChair = {
+    name: 'Васил Филев',
+    title: 'Председател на Общински съвет - Пещера',
+    office: 'Общински съвет - Пещера',
+    phoneFax: '0350 62206',
+    email: 'chairman@peshtera.bg',
+    image: '/vf-chairman.png',
+    electionInfo:
+      'Общинският съвет избира от своя състав председател на съвета. Изборът се провежда с тайно гласуване. За избран се смята кандидатът, който е получил повече от половината от гласовете от общия брой на съветниците.',
+    deputiesInfo:
+      'Общинският съвет може да избере един или повече заместник-председатели на съвета. Условията и редът за избиране и правомощията на заместник-председателя се уреждат в правилника по чл. 21, ал. 3.',
+    earlyTerminationIntro: 'Правомощията на председателя на общинския съвет се прекратяват предсрочно при:',
+    earlyTerminationBullets: [
+      'подаване на оставка;',
+      'трайна невъзможност или системно неизпълнение на задълженията си като председател за повече от три месеца с решение на общинския съвет, взето по реда на ал. 1.',
+    ],
+    replacementInfo:
+      'При предсрочно прекратяване на правомощията на председателя, при негово отсъствие, както и при обсъждане на дейността му, заседанието на съвета се председателства от избран съветник или от заместник-председател, ако има избран такъв.',
+    duties: [
+      'свиква съвета на заседание;',
+      'ръководи подготовката на заседанията на съвета;',
+      'ръководи заседанията на съвета;',
+      'координира работата на постоянните комисии;',
+      'подпомага съветниците в тяхната дейност;',
+      'представлява съвета пред външни лица и организации.',
+    ],
+    laborInfo:
+      'Общинският съвет определя възнаграждението на председателя в зависимост от обема на работата, която извършва, но в размер, не по-голям от възнаграждението на кмета на общината. Председателят на общинския съвет има всички права по трудово правоотношение освен тези, които противоречат или са несъвместими с неговото правно положение.',
+  };
+  const councilMembers = [
+    'Али Неждет Мюмюнов',
+    'Ангел Томов Жилев',
+    'Апостол Ангелов Мадин',
+    'Атанас Александров Янев',
+    'Борис Трайчев Гаджев',
+    'Валентина Атанасова Станкова',
+    'Васил Тодоров Филев',
+    'Георги Димитров Стоилов',
+    'Димитър Николов Батаклиев',
+    'Димитър Тодоров Бакалов',
+    'Зехра Мустафа Алиш',
+    'Иван Георгиев Гълев',
+    'Илиян Тодоров Петров',
+    'Кристина Георгиева Диманина',
+    'Михаил Янков Фолев',
+    'Младен Венциславов Манов',
+    'Неделчо Атанасов Рядков',
+    'Николай Йорданов Пенев',
+    'Николай Нешков Рядков',
+    'Стоян Георгиев Радин',
+    'Теодора Борисова Илиева',
+  ];
+  const copyToClipboard = async (value, label) => {
+    try {
+      await navigator.clipboard.writeText(value);
+      setCopyFeedback(`Копирано: ${label}`);
+      window.setTimeout(() => setCopyFeedback(''), 2000);
+    } catch {
+      setCopyFeedback('Неуспешно копиране. Маркирайте и копирайте ръчно.');
+    }
   };
   const deputyMayors = [
     {
@@ -200,6 +421,166 @@ export default function ContentPage() {
   };
   const filtered49t2 = filter49(declarations49t2);
   const filtered49t13 = filter49(declarations49t13);
+  const filteredAdminContacts = useMemo(() => {
+    const q = adminContactsSearch.trim().toLowerCase();
+    if (!q) return administrationContacts;
+    return administrationContacts.filter((r) => `${r.idx} ${r.name} ${r.role} ${r.email} ${r.phone}`.toLowerCase().includes(q));
+  }, [adminContactsSearch]);
+  const schoolsAndKindergartens = [
+    { idx: 1, name: 'СОУ “Св.Климент Охридски”', phone: '0350/63641' },
+    { idx: 2, name: 'ОУ “Петко Рачов Славейков”', phone: '0350/62133' },
+    { idx: 3, name: 'ОУ “Св. Патриарх Евтимий”', phone: '0350/62337' },
+    { idx: 4, name: 'ОУ “Любен Каравелов”', phone: '0350/66045' },
+    { idx: 5, name: 'НУ “Михаил Каролиди”', phone: '0350/62138' },
+    { idx: 6, name: 'НУ “Михаил Куманов”', phone: '0350/62142' },
+    { idx: 7, name: 'ОУ "Паисий Хилендарски” с.Радилово', phone: '03556/2232' },
+    { idx: 8, name: 'ОДЗ “Изгрев”', phone: '0350/63920' },
+    { idx: 9, name: 'ЦДГ “Слънчо”', phone: '0350/62223' },
+    { idx: 10, name: 'ОДЗ "Иглика”', phone: '0350/90717' },
+    { idx: 11, name: 'ЦДГ “Сокола”', phone: '0350/66294' },
+    { idx: 12, name: 'ОДЗ “Деница”', phone: '0350/63962' },
+    { idx: 13, name: 'ПГ ЛПМ “Васил Левски”', phone: '0350/63968' },
+    { idx: 14, name: 'ПГ ХВТ “Атанас Ченгелев”', phone: '0350/63652' },
+  ];
+  const municipalEnterprises = [
+    { idx: 1, name: 'ОП “Чистота и поддържане на общинската инфраструктура”', phone: '0350/62291' },
+    { idx: 2, name: 'ОП “Паркинги и пазари”', phone: '0350/65684' },
+    { idx: 3, name: 'ОП “Обредни дейности”', phone: '0350/65684' },
+    { idx: 4, name: '“ВКС“ ЕООД', phone: '0350/62131' },
+  ];
+  const geoSections = [
+    {
+      title: 'Обща характеристика',
+      text: 'Община Пещера (17 472 ха) е разположена в Западнородопската част на Осоговско-Родопската зона. В нея попадат части от Бесапарските, Къркарските и Баташките ридове, между които е врязана долината на Стара река и нейните притоци. Град Пещера (н.в. 450 м) се намира в предпланината, на границата с Горнотракийската низина.',
+    },
+    {
+      title: 'Транспортна свързаност',
+      text: 'По дефилето на река "Стара река" минава пътят, който свързва общината на изток със селата Бяга, Исперихово, Ново село и град Пловдив, на югоизток с град Брацигово, а на запад с градовете Батак, Велинград и Доспат и язовирите "Батак", "Беглика", "Широка поляна", "Доспат".',
+    },
+    {
+      title: 'Разстояния и достъп',
+      text: 'На 1 км от града в североизточна посока се отделя пътят за областния център, чрез който се осъществява пряка транспортна връзка със селищата от общината - с. Радилово и с. Капитан Димитриево. Град Пещера се намира на 20 км от Пазарджик, 40 км от Пловдив и на 125 км от София.',
+    },
+    {
+      title: 'Туристически потенциал',
+      text: 'На 16 км от Пещера се намира летовище "Свети Константин", известно със своя благоприятен климат и красива природа. Построените там ски-влекове създават условия за развитие на зимните спортове, а близкият язовир "Батак" - за летен плаж и риболов.',
+    },
+    {
+      title: 'Почви и стопанство',
+      text: 'Преобладаващите типове почви в общината са канелено-горски и алувиално-ливадни, което благоприятства развитието на зеленчукопроизводството, овощарството, лозарството, тютюнопроизводството и животновъдството.',
+    },
+    {
+      title: 'Горски фонд',
+      text: 'От общата територия на Община Пещера около 40% е заета с гори, което се отразява благоприятно върху екологията и способства за развитието на дърводобива, дървопреработването и ловния туризъм.',
+    },
+  ];
+  const historySections = [
+    {
+      title: 'Най-ранни следи',
+      text: 'Град Пещера е селище с твърде стара и интересна история. Най-ранните човешки следи датират от епохата на неолита. В продължение на хилядолетия този край е обитаван от тракийското племе беси, изпитало влиянието на македонци, римляни и византийци.',
+    },
+    {
+      title: 'Възникване и културни пластове',
+      text: 'Възникването на селището в пещерската котловина е станало през втората половина на IV век пр.н.е. Най-трайно е взаимодействието по-късно на трите етноса: траки, прабългари и славяни. Свидетелство за това са откритите останки в околностите от хилядолетна култура - кюпове с обгорено жито, строителни материали, оръжия, оръдия на труда, монети, накити, култови предмети, саркофази, останки от калдаръмени пътища, мостове и крепости.',
+    },
+    {
+      title: 'Име на града',
+      text: 'Няколко са предположенията за името на Пещера, но надделява това от пещерите в околностите.',
+    },
+    {
+      title: 'Възрожденско строителство',
+      text: 'Във възрожденската епоха е извършено огромно строителство на църкви, мостове, чешми, къщи и училища от майсторите на пещерската архитектурно-строителна школа. Тяхно дело са монументалните църкви "Св. Димитър", "Св. Петка" и "Св. Богородица" в Пещера, "Св. Марина" в Пловдив, "Св. Богородица" в Пазарджик и часовниковата кула в Пещера.',
+    },
+  ];
+  const cultureGallery = [
+    { src: '/culture-chitalishte-razvitie.png', title: 'Читалище „Развитие“' },
+    { src: '/culture-sv-dimitar-front.png', title: 'Църквата „Св. Димитър“ (екстериор)' },
+    { src: '/culture-sv-dimitar-interior.png', title: 'Църквата „Св. Димитър“ (интериор)' },
+    { src: '/culture-museum-yard.png', title: 'Музеен комплекс (метохът на „Св. Петка“)' },
+  ];
+  const portalGallery = [
+    { src: '/hero-peshtera-monument.png', title: 'Паметен монумент „Пещера“', category: 'Забележителности' },
+    { src: '/hero-peristera.png', title: 'Крепост Перистера', category: 'Забележителности' },
+    { src: '/culture-hero-town.png', title: 'Панорама на град Пещера', category: 'Пейзажи' },
+    { src: '/culture-chitalishte-razvitie.png', title: 'Читалище „Развитие“', category: 'Култура' },
+    { src: '/culture-sv-dimitar-front.png', title: 'Църква „Св. Димитър“', category: 'Култура' },
+    { src: '/culture-sv-dimitar-interior.png', title: 'Интериор на „Св. Димитър“', category: 'Култура' },
+    { src: '/culture-museum-yard.png', title: 'Музеен комплекс', category: 'Култура' },
+    { src: '/logo-peshtera.png', title: 'Символ на общината', category: 'Символи' },
+  ];
+  const educationInfra = [
+    { idx: 1, type: 'ОДЗ', count: 3 },
+    { idx: 2, type: 'ЦДГ', count: 4 },
+    { idx: 3, type: 'Начални училища 1-4 клас', count: 2 },
+    { idx: 4, type: 'Основни училища 1-8 клас', count: 4 },
+    { idx: 5, type: 'СОУ 1-12 клас', count: 1 },
+    { idx: 6, type: 'ПГ ХВТ “Атанас Ченгелев“', count: 1 },
+    { idx: 7, type: 'ПГ ЛПМ “Васил Левски”', count: 1 },
+    { idx: 8, type: 'ОДК - гр. Пещера', count: 1 },
+    { idx: 9, type: 'Друго', count: '—' },
+  ];
+  const educationTeachers = [
+    { edu: 'Висше бакалавър/магистър', qualification: 'С педагогическа квалификация', count: 161 },
+    { edu: 'Висше бакалавър/магистър', qualification: 'Без педагогическа квалификация', count: '—' },
+    { edu: 'Висше бакалавър/магистър', qualification: 'Детски учители', count: 39 },
+    { edu: 'Висше бакалавър/магистър', qualification: 'Начални учители', count: 51 },
+    { edu: 'Висше бакалавър/магистър', qualification: 'Прогимназиални', count: 61 },
+    { edu: 'Висше бакалавър/магистър', qualification: 'Гимназиални', count: 10 },
+    { edu: 'Специалист', qualification: 'С педагогическа квалификация', count: 35 },
+    { edu: 'Специалист', qualification: 'Без педагогическа квалификация', count: '—' },
+    { edu: 'Специалист', qualification: 'Детски учители', count: 12 },
+    { edu: 'Специалист', qualification: 'Начални учители', count: 10 },
+    { edu: 'Специалист', qualification: 'Прогимназиални учители', count: 13 },
+    { edu: 'Специалист', qualification: 'Учители по практика', count: 0 },
+  ];
+  const educationStudents = [
+    { idx: 1, school: 'Начални училища 1-4 клас', count: 425 },
+    { idx: 2, school: 'Основни училища 1-8 клас', count: 987 },
+    { idx: 3, school: 'СОУ 1-12 клас', count: 336 },
+    { idx: 4, school: 'Професионални гимназии', count: 349 },
+  ];
+  const availableTenderYears = Array.from(new Set(tenders2025.map((t) => String(t.year)))).sort((a, b) => Number(b) - Number(a));
+  const defaultTenderStructured = tenders2025.find((t) => t.slug === 'zapoved-925-2025')?.structured;
+  const activeTenderStructured = tenderDetail?.structured ?? defaultTenderStructured;
+  const isPlaceholderTenderText = Boolean(tenderDetail && !tenderDetail.structured && defaultTenderStructured);
+  const filteredTenders = useMemo(() => {
+    const q = tendersSearch.trim().toLowerCase();
+    return tenders2025.filter((t) => {
+      const byYear = tendersYear === 'all' || String(t.year) === tendersYear;
+      const byQuery = !q || `${t.idx} ${t.title} ${t.publishedAt}`.toLowerCase().includes(q);
+      return byYear && byQuery;
+    });
+  }, [tendersSearch, tendersYear]);
+  const galleryFilters = ['all', ...Array.from(new Set(portalGallery.map((img) => img.category)))];
+  const displayedGallery = galleryFilter === 'all' ? portalGallery : portalGallery.filter((img) => img.category === galleryFilter);
+  const galleryActiveIndex = galleryLightbox ? displayedGallery.findIndex((img) => img.src === galleryLightbox.src) : -1;
+  const openGalleryAt = (idx) => setGalleryLightbox(displayedGallery[idx]);
+  const prevGalleryImage = () => {
+    if (galleryActiveIndex < 0) return;
+    const nextIdx = (galleryActiveIndex - 1 + displayedGallery.length) % displayedGallery.length;
+    openGalleryAt(nextIdx);
+  };
+  const nextGalleryImage = () => {
+    if (galleryActiveIndex < 0) return;
+    const nextIdx = (galleryActiveIndex + 1) % displayedGallery.length;
+    openGalleryAt(nextIdx);
+  };
+  useEffect(() => {
+    if (!galleryLightbox) return undefined;
+    const onKeyDown = (e) => {
+      if (e.key === 'ArrowLeft') prevGalleryImage();
+      if (e.key === 'ArrowRight') nextGalleryImage();
+      if (e.key === 'Escape') setGalleryLightbox(null);
+    };
+    window.addEventListener('keydown', onKeyDown);
+    return () => window.removeEventListener('keydown', onKeyDown);
+  }, [galleryLightbox, galleryActiveIndex, displayedGallery.length]);
+  const getAssuranceChipColor = (value) => {
+    if (value === 'високо') return { bg: '#dcfce7', color: '#166534' };
+    if (value === 'значително' || value === 'Съществено') return { bg: '#fef3c7', color: '#92400e' };
+    if (value === 'ниско') return { bg: '#dbeafe', color: '#1e40af' };
+    return { bg: '#e5e7eb', color: '#374151' };
+  };
   const managementProgramText = `ПРОГРАМА ЗА УПРАВЛЕНИЕ НА ОБЩИНА ПЕЩЕРА 2023-2027г.
 ПРОГРАМА ЗА УПРАВЛЕНИЕ НА ОБЩИНА ПЕЩЕРА ЗА
 MАНДАТ 2023-2027г.
@@ -575,6 +956,21 @@ MАНДАТ 2023-2027г.
 Програмата за управление на община Пещера за мандат 2023-2027г. е приета с Решение №22/25.01.2024 год. на Общински съвет - Пещера.
 
 Copyright © 2004 - 2026 Община Пещера - Официален сайт. Designed and support by Administrator`;
+  const councilCouncilorsCountBullets = bullets?.filter((b) => /^\d+\.\s+при население/.test(b)) ?? [];
+  const powersStart = bullets?.findIndex((b) => b === 'Общинският съвет:') ?? -1;
+  const powersEnd = bullets?.findIndex((b) => b === 'Общинският съвет се свиква на заседание от неговия председател:') ?? -1;
+  const callStart = powersEnd;
+  const callEnd = bullets?.findIndex((b) => b === 'Председателят на съвета:') ?? -1;
+  const chairStart = callEnd;
+  const councilPowersBullets =
+    powersStart >= 0 && powersEnd > powersStart
+      ? (bullets ?? []).slice(powersStart + 1, powersEnd).filter((b) => /^\d+\./.test(b))
+      : [];
+  const councilCallBullets =
+    callStart >= 0 && callEnd > callStart ? (bullets ?? []).slice(callStart + 1, callEnd).filter((b) => /^\d+\./.test(b)) : [];
+  const councilChairBullets = chairStart >= 0 ? (bullets ?? []).slice(chairStart + 1).filter((b) => /^\d+\./.test(b)) : [];
+  const councilPowersLeft = councilPowersBullets.slice(0, Math.ceil(councilPowersBullets.length / 2));
+  const councilPowersRight = councilPowersBullets.slice(Math.ceil(councilPowersBullets.length / 2));
 
   return (
     <Container maxWidth="md" sx={{ py: 1 }}>
@@ -589,11 +985,7 @@ Copyright © 2004 - 2026 Община Пещера - Официален сайт
       ) : showMirror && !hasCustomLayout ? (
         <>
           <Typography variant="body2" color="text.secondary" paragraph sx={{ mb: 2 }}>
-            По-долу е възпроизведено съдържанието от съответната страница на{' '}
-            <a href={OFFICIAL_SITE} target="_blank" rel="noopener noreferrer">
-              www.peshtera.bg
-            </a>
-            . За най-актуални файлове и формуляри отворете оригинала.
+            По-долу е възпроизведено съдържанието от съответната страница.
           </Typography>
           <Box
             className="municipality-mirror"
@@ -601,6 +993,2462 @@ Copyright © 2004 - 2026 Община Пещера - Официален сайт
             dangerouslySetInnerHTML={{ __html: mirrorEntry.html }}
           />
         </>
+      ) : isCouncilGeneralPage ? (
+        <Stack spacing={2}>
+          <Box
+            sx={{
+              border: '1px solid #d8dee8',
+              borderRadius: 2,
+              p: { xs: 2, md: 2.5 },
+              bgcolor: '#f8fafc',
+              boxShadow: '0 8px 24px rgba(15, 23, 42, 0.06)',
+            }}
+          >
+            <Typography variant="overline" color="text.secondary" sx={{ letterSpacing: 0.6 }}>
+              Обща информация
+            </Typography>
+            <Typography variant="h5" sx={{ fontWeight: 700, mb: 1 }}>
+              Общински съвет - Пещера
+            </Typography>
+            <Typography variant="body2" color="text.secondary" sx={{ lineHeight: 1.75 }}>
+              {paragraphs[0]}
+            </Typography>
+            <Typography variant="body2" color="text.secondary" sx={{ lineHeight: 1.75, mt: 1 }}>
+              {paragraphs[1]}
+            </Typography>
+          </Box>
+
+          <Box
+            sx={{
+              display: 'grid',
+              gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' },
+              gap: 2,
+            }}
+          >
+            <Box sx={{ border: '1px solid #d8dee8', borderRadius: 2, p: { xs: 2, md: 2.5 }, bgcolor: 'background.paper' }}>
+              <Typography variant="h6" sx={{ fontWeight: 700, mb: 1.25 }}>
+                Брой общински съветници според населението
+              </Typography>
+              <Box component="ol" sx={{ m: 0, pl: 3, '& li': { mb: 0.6, color: 'text.secondary' } }}>
+                {councilCouncilorsCountBullets.map((item, i) => (
+                  <Typography key={i} component="li" variant="body2" sx={{ lineHeight: 1.7 }}>
+                    {item.replace(/^\d+\.\s*/, '')}
+                  </Typography>
+                ))}
+              </Box>
+            </Box>
+
+            <Box sx={{ border: '1px solid #d8dee8', borderRadius: 2, p: { xs: 2, md: 2.5 }, bgcolor: 'background.paper' }}>
+              <Typography variant="h6" sx={{ fontWeight: 700, mb: 1.25 }}>
+                Свикване на заседания
+              </Typography>
+              <Box component="ol" sx={{ m: 0, pl: 3, '& li': { mb: 0.6, color: 'text.secondary' } }}>
+                {councilCallBullets.map((item, i) => (
+                  <Typography key={i} component="li" variant="body2" sx={{ lineHeight: 1.7 }}>
+                    {item.replace(/^\d+\.\s*/, '')}
+                  </Typography>
+                ))}
+              </Box>
+            </Box>
+          </Box>
+
+          <Box sx={{ border: '1px solid #d8dee8', borderRadius: 2, p: { xs: 2, md: 2.5 }, bgcolor: 'background.paper' }}>
+            <Typography variant="h6" sx={{ fontWeight: 700, mb: 1.25 }}>
+              Основни правомощия на Общинския съвет
+            </Typography>
+            <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', lg: '1fr 1fr' }, gap: 2 }}>
+              <Box
+                component="ol"
+                sx={{
+                  m: 0,
+                  pl: 3,
+                  '& li': { mb: 0.6, color: 'text.secondary' },
+                  '& li::marker': { fontWeight: 700, color: 'text.primary' },
+                }}
+              >
+                {councilPowersLeft.map((item, i) => (
+                  <Typography key={i} component="li" variant="body2" sx={{ lineHeight: 1.7 }}>
+                    {item.replace(/^\d+\.\s*/, '')}
+                  </Typography>
+                ))}
+              </Box>
+              <Box
+                component="ol"
+                start={councilPowersLeft.length + 1}
+                sx={{
+                  m: 0,
+                  pl: 3,
+                  '& li': { mb: 0.6, color: 'text.secondary' },
+                  '& li::marker': { fontWeight: 700, color: 'text.primary' },
+                }}
+              >
+                {councilPowersRight.map((item, i) => (
+                  <Typography key={i} component="li" variant="body2" sx={{ lineHeight: 1.7 }}>
+                    {item.replace(/^\d+\.\s*/, '')}
+                  </Typography>
+                ))}
+              </Box>
+            </Box>
+          </Box>
+
+          <Box sx={{ border: '1px solid #d8dee8', borderRadius: 2, p: { xs: 2, md: 2.5 }, bgcolor: 'background.paper' }}>
+            <Typography variant="h6" sx={{ fontWeight: 700, mb: 0.25 }}>
+              Председател на Общинския съвет
+            </Typography>
+            <Typography variant="body2" color="text.secondary" sx={{ mb: 1.25 }}>
+              {paragraphs.find((p) => p.startsWith('Общинският съвет избира от своя състав председател'))}
+            </Typography>
+            <Box component="ol" sx={{ m: 0, pl: 3, '& li': { mb: 0.6, color: 'text.secondary' }, '& li::marker': { fontWeight: 700 } }}>
+              {councilChairBullets.map((item, i) => (
+                <Typography key={i} component="li" variant="body2" sx={{ lineHeight: 1.7 }}>
+                  {item.replace(/^\d+\.\s*/, '')}
+                </Typography>
+              ))}
+            </Box>
+          </Box>
+
+          <Box sx={{ border: '1px solid #d8dee8', borderRadius: 2, p: { xs: 2, md: 2.5 }, bgcolor: 'background.paper' }}>
+            <Typography variant="h6" sx={{ fontWeight: 700, mb: 1.25 }}>
+              Публичност, актове и достъп
+            </Typography>
+            {paragraphs
+              .filter(
+                (p) =>
+                  p.includes('В изпълнение на правомощията си') ||
+                  p.includes('Общинският съвет приема правилник') ||
+                  p.includes('обществен посредник') ||
+                  p.includes('Актовете на общинския съвет') ||
+                  p.includes('Кметът на общината определя подходящо помещение') ||
+                  p.includes('За нарушаване на наредбите') ||
+                  p.includes('Наказателните постановления') ||
+                  p.includes('Административнонаказателното производство') ||
+                  p.includes('Заседанията на общинския съвет') ||
+                  p.includes('За всяко заседание на общинския съвет') ||
+                  p.includes('няма самостоятелен щат'),
+              )
+              .map((text, i) => (
+                <Typography key={i} variant="body2" color="text.secondary" paragraph sx={{ lineHeight: 1.75, mb: 1.1 }}>
+                  {text}
+                </Typography>
+              ))}
+          </Box>
+        </Stack>
+      ) : isCouncilChairPage ? (
+        <Box
+          sx={{
+            border: '1px solid #d8dee8',
+            borderRadius: 2,
+            overflow: 'hidden',
+            bgcolor: 'background.paper',
+            boxShadow: '0 8px 24px rgba(15, 23, 42, 0.06)',
+          }}
+        >
+          <Stack direction={{ xs: 'column', md: 'row' }}>
+            <Box sx={{ p: 2.5, minWidth: { md: 300 }, maxWidth: { md: 340 }, bgcolor: '#f8fafc' }}>
+              {councilChair.image ? (
+                <Box
+                  component="img"
+                  src={councilChair.image}
+                  alt={councilChair.name}
+                  sx={{
+                    width: '100%',
+                    height: 'auto',
+                    borderRadius: 2,
+                    display: 'block',
+                    mb: 2,
+                    border: '1px solid #e2e8f0',
+                  }}
+                />
+              ) : (
+                <Box
+                  sx={{
+                    width: 92,
+                    height: 92,
+                    borderRadius: '50%',
+                    bgcolor: '#e2e8f0',
+                    color: '#334155',
+                    display: 'grid',
+                    placeItems: 'center',
+                    fontWeight: 800,
+                    fontSize: '1.15rem',
+                    mb: 2,
+                    border: '1px solid #cbd5e1',
+                  }}
+                >
+                  ПР
+                </Box>
+              )}
+              <Typography variant="h6" sx={{ fontWeight: 700, lineHeight: 1.3 }}>
+                {councilChair.name}
+              </Typography>
+              <Typography variant="body2" color="text.secondary">
+                {councilChair.title}
+              </Typography>
+            </Box>
+            <Divider orientation="vertical" flexItem sx={{ display: { xs: 'none', md: 'block' } }} />
+            <Divider sx={{ display: { xs: 'block', md: 'none' } }} />
+            <Box sx={{ p: 2.5, flex: 1 }}>
+              <Typography variant="h6" sx={{ fontWeight: 700, mb: 2 }}>
+                Контакти
+              </Typography>
+              <Stack spacing={1.25}>
+                <Box sx={{ p: 1.5, border: '1px solid #e2e8f0', borderRadius: 1.5 }}>
+                  <Typography variant="caption" color="text.secondary">
+                    Институция
+                  </Typography>
+                  <Typography variant="body1">{councilChair.office}</Typography>
+                </Box>
+                <Box sx={{ p: 1.5, border: '1px solid #e2e8f0', borderRadius: 1.5 }}>
+                  <Typography variant="caption" color="text.secondary">
+                    Телефон/факс
+                  </Typography>
+                  <Link href={`tel:${councilChair.phoneFax.replace(/[^\d+]/g, '')}`} underline="hover" sx={{ fontWeight: 600 }}>
+                    {councilChair.phoneFax}
+                  </Link>
+                </Box>
+                <Box sx={{ p: 1.5, border: '1px solid #e2e8f0', borderRadius: 1.5 }}>
+                  <Typography variant="caption" color="text.secondary">
+                    Електронна поща
+                  </Typography>
+                  <Link href={`mailto:${councilChair.email}`} underline="hover" sx={{ fontWeight: 600 }}>
+                    {councilChair.email}
+                  </Link>
+                </Box>
+              </Stack>
+            </Box>
+          </Stack>
+          <Divider />
+          <Box sx={{ p: 2.5 }}>
+            <Typography variant="h6" sx={{ fontWeight: 700, mb: 1.5 }}>
+              Функции на председателя на Общинския съвет
+            </Typography>
+            <Typography variant="body2" color="text.secondary" paragraph sx={{ lineHeight: 1.75 }}>
+              {councilChair.electionInfo}
+            </Typography>
+            <Typography variant="body2" color="text.secondary" paragraph sx={{ lineHeight: 1.75 }}>
+              {councilChair.deputiesInfo}
+            </Typography>
+            <Typography variant="body2" color="text.secondary" sx={{ lineHeight: 1.75, mb: 0.8 }}>
+              {councilChair.earlyTerminationIntro}
+            </Typography>
+            <Box component="ol" sx={{ m: 0, pl: 3, '& li': { mb: 0.7, color: 'text.secondary' }, '& li::marker': { fontWeight: 700 } }}>
+              {councilChair.earlyTerminationBullets.map((item, i) => (
+                <Typography key={i} component="li" variant="body2" sx={{ lineHeight: 1.75 }}>
+                  {item}
+                </Typography>
+              ))}
+            </Box>
+            <Typography variant="body2" color="text.secondary" paragraph sx={{ lineHeight: 1.75, mt: 1.5 }}>
+              {councilChair.replacementInfo}
+            </Typography>
+            <Typography variant="subtitle1" sx={{ fontWeight: 700, mb: 0.8 }}>
+              Председателят на съвета:
+            </Typography>
+            <Box component="ol" sx={{ m: 0, pl: 3, '& li': { mb: 0.7, color: 'text.secondary' }, '& li::marker': { fontWeight: 700 } }}>
+              {councilChair.duties.map((item, i) => (
+                <Typography key={i} component="li" variant="body2" sx={{ lineHeight: 1.75 }}>
+                  {item}
+                </Typography>
+              ))}
+            </Box>
+            <Typography variant="body2" color="text.secondary" sx={{ lineHeight: 1.75, mt: 1.5 }}>
+              {councilChair.laborInfo}
+            </Typography>
+          </Box>
+        </Box>
+      ) : isCouncilMembersPage ? (
+        <Stack spacing={2}>
+          <Box
+            sx={{
+              border: '1px solid #d8dee8',
+              borderRadius: 2,
+              p: { xs: 2, md: 2.5 },
+              background: 'linear-gradient(180deg, #f8fafc 0%, #ffffff 100%)',
+              boxShadow: '0 8px 24px rgba(15, 23, 42, 0.06)',
+            }}
+          >
+            <Typography variant="overline" color="text.secondary" sx={{ letterSpacing: 0.9 }}>
+              Общински съвет - Пещера
+            </Typography>
+            <Typography variant="h5" sx={{ fontWeight: 800, mb: 0.75 }}>
+              Списък на съветниците
+            </Typography>
+            <Box
+              component="span"
+              sx={{
+                display: 'inline-flex',
+                px: 1.25,
+                py: 0.4,
+                borderRadius: 999,
+                bgcolor: '#e2e8f0',
+                color: '#0f172a',
+                fontSize: '0.75rem',
+                fontWeight: 700,
+                letterSpacing: 0.2,
+              }}
+            >
+              Мандат 2023-2027 г.
+            </Box>
+          </Box>
+
+          <Box
+            sx={{
+              border: '1px solid #d8dee8',
+              borderRadius: 2,
+              p: { xs: 2, md: 2.5 },
+              bgcolor: 'background.paper',
+              boxShadow: '0 6px 20px rgba(15, 23, 42, 0.04)',
+            }}
+          >
+            <Box
+              component="ol"
+              sx={{
+                m: 0,
+                pl: 3,
+                columns: { xs: 1, md: 2 },
+                columnGap: 4,
+                '& li': { mb: 0.95, breakInside: 'avoid', color: 'text.primary' },
+                '& li::marker': { fontWeight: 700, color: 'text.primary' },
+              }}
+            >
+              {councilMembers.map((name, i) => (
+                <Typography key={i} component="li" variant="body1" sx={{ lineHeight: 1.7, fontWeight: 500 }}>
+                  {name}
+                </Typography>
+              ))}
+            </Box>
+          </Box>
+        </Stack>
+      ) : isAdminContactsPage ? (
+        <Stack spacing={2}>
+          <Box
+            sx={{
+              border: '1px solid #d8dee8',
+              borderRadius: 2,
+              p: { xs: 2, md: 2.5 },
+              bgcolor: '#f8fafc',
+              boxShadow: '0 8px 24px rgba(15, 23, 42, 0.06)',
+            }}
+          >
+            <Typography variant="overline" color="text.secondary" sx={{ letterSpacing: 0.7 }}>
+              Общинска администрация - Пещера
+            </Typography>
+            <Typography variant="h5" sx={{ fontWeight: 800, mb: 0.75 }}>
+              Контакти на администрацията
+            </Typography>
+            <Typography variant="body2" color="text.secondary">
+              Телефони за контакт: 6-22-03 / 6-22-08 / 6-22-14 / 6-22-31
+            </Typography>
+            <Typography variant="body2" color="text.secondary">
+              Телефонен код на гр. Пещера: 0350
+            </Typography>
+          </Box>
+
+          <Box sx={{ border: '1px solid #d8dee8', borderRadius: 2, overflow: 'hidden', bgcolor: 'background.paper' }}>
+            <Box sx={{ p: 1.5, borderBottom: '1px solid #e2e8f0' }}>
+              <TextField
+                size="small"
+                fullWidth
+                label="Търсене по №, име, длъжност, е-поща или телефон"
+                value={adminContactsSearch}
+                onChange={(e) => setAdminContactsSearch(e.target.value)}
+              />
+            </Box>
+            <Box sx={{ overflowX: 'auto' }}>
+              <Box component="table" sx={{ width: '100%', borderCollapse: 'collapse', minWidth: 980 }}>
+                <Box component="thead" sx={{ bgcolor: '#f8fafc' }}>
+                  <Box component="tr">
+                    <Box component="th" sx={{ p: 1.25, borderBottom: '1px solid #e2e8f0', textAlign: 'left', width: 60 }}>
+                      №
+                    </Box>
+                    <Box component="th" sx={{ p: 1.25, borderBottom: '1px solid #e2e8f0', textAlign: 'left', width: 220 }}>
+                      Име
+                    </Box>
+                    <Box component="th" sx={{ p: 1.25, borderBottom: '1px solid #e2e8f0', textAlign: 'left' }}>
+                      Длъжност
+                    </Box>
+                    <Box component="th" sx={{ p: 1.25, borderBottom: '1px solid #e2e8f0', textAlign: 'left', width: 220 }}>
+                      Е-поща
+                    </Box>
+                    <Box component="th" sx={{ p: 1.25, borderBottom: '1px solid #e2e8f0', textAlign: 'left', width: 150 }}>
+                      Телефон
+                    </Box>
+                    <Box component="th" sx={{ p: 1.25, borderBottom: '1px solid #e2e8f0', textAlign: 'left', width: 90 }}>
+                      Факс
+                    </Box>
+                  </Box>
+                </Box>
+                <Box component="tbody">
+                  {filteredAdminContacts.map((r) => (
+                    <Box component="tr" key={r.idx}>
+                      <Box component="td" sx={{ p: 1.1, borderBottom: '1px solid #f1f5f9', verticalAlign: 'top' }}>
+                        {r.idx}
+                      </Box>
+                      <Box component="td" sx={{ p: 1.1, borderBottom: '1px solid #f1f5f9', verticalAlign: 'top' }}>
+                        {r.name}
+                      </Box>
+                      <Box component="td" sx={{ p: 1.1, borderBottom: '1px solid #f1f5f9', verticalAlign: 'top' }}>
+                        {r.role}
+                      </Box>
+                      <Box component="td" sx={{ p: 1.1, borderBottom: '1px solid #f1f5f9', verticalAlign: 'top' }}>
+                        {r.email ? (
+                          <Link href={`mailto:${r.email}`} underline="hover" sx={{ fontWeight: 600 }}>
+                            {r.email}
+                          </Link>
+                        ) : (
+                          '—'
+                        )}
+                      </Box>
+                      <Box component="td" sx={{ p: 1.1, borderBottom: '1px solid #f1f5f9', verticalAlign: 'top' }}>
+                        {r.phone}
+                      </Box>
+                      <Box component="td" sx={{ p: 1.1, borderBottom: '1px solid #f1f5f9', verticalAlign: 'top' }}>
+                        {r.fax || '—'}
+                      </Box>
+                    </Box>
+                  ))}
+                  {filteredAdminContacts.length === 0 ? (
+                    <Box component="tr">
+                      <Box component="td" colSpan={6} sx={{ p: 2, textAlign: 'center', color: 'text.secondary' }}>
+                        Няма резултати за търсенето.
+                      </Box>
+                    </Box>
+                  ) : null}
+                </Box>
+              </Box>
+            </Box>
+          </Box>
+        </Stack>
+      ) : isSchoolsContactsPage ? (
+        <Stack spacing={2}>
+          <Box
+            sx={{
+              border: '1px solid #d8dee8',
+              borderRadius: 2,
+              p: { xs: 2, md: 2.5 },
+              bgcolor: '#f8fafc',
+              boxShadow: '0 8px 24px rgba(15, 23, 42, 0.06)',
+            }}
+          >
+            <Typography variant="overline" color="text.secondary" sx={{ letterSpacing: 0.7 }}>
+              Контакти → Връзка с нас
+            </Typography>
+            <Typography variant="h5" sx={{ fontWeight: 800, mb: 0.5 }}>
+              Училища и ДГ
+            </Typography>
+            <Typography variant="body2" color="text.secondary">
+              ТЕЛЕФОНЕН УКАЗАТЕЛ на Общинските и Държавни учебните и детски заведения в община Пещера
+            </Typography>
+          </Box>
+
+          <Box sx={{ border: '1px solid #d8dee8', borderRadius: 2, overflow: 'hidden', bgcolor: 'background.paper' }}>
+            <Box sx={{ overflowX: 'auto' }}>
+              <Box component="table" sx={{ width: '100%', borderCollapse: 'collapse', minWidth: 680 }}>
+                <Box component="thead" sx={{ bgcolor: '#f8fafc' }}>
+                  <Box component="tr">
+                    <Box component="th" sx={{ p: 1.25, borderBottom: '1px solid #e2e8f0', textAlign: 'left', width: 70 }}>
+                      №
+                    </Box>
+                    <Box component="th" sx={{ p: 1.25, borderBottom: '1px solid #e2e8f0', textAlign: 'left' }}>
+                      Учебно / детско заведение
+                    </Box>
+                    <Box component="th" sx={{ p: 1.25, borderBottom: '1px solid #e2e8f0', textAlign: 'left', width: 180 }}>
+                      Телефон
+                    </Box>
+                  </Box>
+                </Box>
+                <Box component="tbody">
+                  {schoolsAndKindergartens.map((row) => (
+                    <Box component="tr" key={row.idx}>
+                      <Box component="td" sx={{ p: 1.1, borderBottom: '1px solid #f1f5f9', verticalAlign: 'top' }}>
+                        {row.idx}
+                      </Box>
+                      <Box component="td" sx={{ p: 1.1, borderBottom: '1px solid #f1f5f9', verticalAlign: 'top' }}>
+                        {row.name}
+                      </Box>
+                      <Box component="td" sx={{ p: 1.1, borderBottom: '1px solid #f1f5f9', verticalAlign: 'top' }}>
+                        <Link href={`tel:${row.phone.replace(/[^\d+]/g, '')}`} underline="hover" sx={{ fontWeight: 600 }}>
+                          {row.phone}
+                        </Link>
+                      </Box>
+                    </Box>
+                  ))}
+                </Box>
+              </Box>
+            </Box>
+          </Box>
+        </Stack>
+      ) : isEducationPage ? (
+        <Stack spacing={2}>
+          <Box
+            sx={{
+              border: '1px solid #d8dee8',
+              borderRadius: 2,
+              p: { xs: 2, md: 2.5 },
+              background: 'linear-gradient(180deg, #f8fafc 0%, #ffffff 100%)',
+              boxShadow: '0 8px 24px rgba(15, 23, 42, 0.06)',
+            }}
+          >
+            <Typography variant="overline" color="text.secondary" sx={{ letterSpacing: 0.7 }}>
+              Община Пещера
+            </Typography>
+            <Typography variant="h4" sx={{ fontWeight: 800, mb: 0.5 }}>
+              Образование
+            </Typography>
+            <Typography variant="body2" color="text.secondary" sx={{ lineHeight: 1.75 }}>
+              Образователната система на община Пещера се състои от 7 детски заведения и 7 общински, 2 държавни
+              училища и 1 ОДК.
+            </Typography>
+          </Box>
+
+          <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr 1fr', md: 'repeat(4, 1fr)' }, gap: 1.5 }}>
+            <Box sx={{ border: '1px solid #d8dee8', borderRadius: 1.5, p: 1.25, bgcolor: '#f8fafc' }}>
+              <Typography variant="caption" color="text.secondary">
+                Общо звена
+              </Typography>
+              <Typography variant="subtitle2" sx={{ fontWeight: 700 }}>
+                17
+              </Typography>
+            </Box>
+            <Box sx={{ border: '1px solid #d8dee8', borderRadius: 1.5, p: 1.25, bgcolor: '#f8fafc' }}>
+              <Typography variant="caption" color="text.secondary">
+                Учители (2011)
+              </Typography>
+              <Typography variant="subtitle2" sx={{ fontWeight: 700 }}>
+                196
+              </Typography>
+            </Box>
+            <Box sx={{ border: '1px solid #d8dee8', borderRadius: 1.5, p: 1.25, bgcolor: '#f8fafc' }}>
+              <Typography variant="caption" color="text.secondary">
+                Ученици (общо, 2011)
+              </Typography>
+              <Typography variant="subtitle2" sx={{ fontWeight: 700 }}>
+                2097
+              </Typography>
+            </Box>
+            <Box sx={{ border: '1px solid #d8dee8', borderRadius: 1.5, p: 1.25, bgcolor: '#f8fafc' }}>
+              <Typography variant="caption" color="text.secondary">
+                Детски градини
+              </Typography>
+              <Typography variant="subtitle2" sx={{ fontWeight: 700 }}>
+                7
+              </Typography>
+            </Box>
+          </Box>
+
+          <Box sx={{ border: '1px solid #d8dee8', borderRadius: 2, p: { xs: 2, md: 2.5 }, bgcolor: 'background.paper', borderLeft: '4px solid #0ea5e9' }}>
+            <Typography variant="h6" sx={{ fontWeight: 700, mb: 1 }}>
+              Мисия и цели
+            </Typography>
+            <Typography variant="body2" color="text.secondary" sx={{ lineHeight: 1.75, mb: 0.8 }}>
+              Изграждането на гражданското общество и развитието на демократичните процеси поставят като актуален
+              проблем съхраняването и обогатяването на традициите, както и търсенето на иновационни модели за дейността
+              на училището.
+            </Typography>
+            <Typography variant="body2" color="text.secondary" sx={{ lineHeight: 1.75, mb: 0.8 }}>
+              Главната цел на училищата в община Пещера е формиране и развитие на личността чрез гъвкава и непрекъснато
+              обновяваща се система от дейности с висока адаптивност към възрастовите и индивидуалните възможности на
+              учениците.
+            </Typography>
+            <Typography variant="body2" color="text.secondary" sx={{ lineHeight: 1.75 }}>
+              Училището следва да бъде катализатор на образователните, социалните и културните процеси в местната
+              общност и да подпомага устойчивото развитие на общината.
+            </Typography>
+          </Box>
+
+          <Box sx={{ border: '1px solid #d8dee8', borderRadius: 2, overflow: 'hidden', bgcolor: 'background.paper' }}>
+            <Box sx={{ p: 1.5, borderBottom: '1px solid #e2e8f0', bgcolor: '#f8fafc' }}>
+              <Typography variant="subtitle1" sx={{ fontWeight: 700 }}>
+                Инфраструктура на образованието (2011 г.)
+              </Typography>
+            </Box>
+            <Box sx={{ overflowX: 'auto' }}>
+              <Box component="table" sx={{ width: '100%', borderCollapse: 'collapse', minWidth: 640 }}>
+                <Box component="thead">
+                  <Box component="tr">
+                    <Box component="th" sx={{ p: 1.1, borderBottom: '1px solid #e2e8f0', textAlign: 'left', width: 60 }}>№</Box>
+                    <Box component="th" sx={{ p: 1.1, borderBottom: '1px solid #e2e8f0', textAlign: 'left' }}>Вид на учебното заведение</Box>
+                    <Box component="th" sx={{ p: 1.1, borderBottom: '1px solid #e2e8f0', textAlign: 'left', width: 90 }}>Брой</Box>
+                  </Box>
+                </Box>
+                <Box component="tbody">
+                  {educationInfra.map((row) => (
+                    <Box component="tr" key={`infra-${row.idx}`}>
+                      <Box component="td" sx={{ p: 1.1, borderBottom: '1px solid #f1f5f9' }}>{row.idx}</Box>
+                      <Box component="td" sx={{ p: 1.1, borderBottom: '1px solid #f1f5f9' }}>{row.type}</Box>
+                      <Box component="td" sx={{ p: 1.1, borderBottom: '1px solid #f1f5f9' }}>{row.count}</Box>
+                    </Box>
+                  ))}
+                  <Box component="tr">
+                    <Box component="td" />
+                    <Box component="td" sx={{ p: 1.1, borderTop: '1px solid #e2e8f0', fontWeight: 700 }}>ВСИЧКО</Box>
+                    <Box component="td" sx={{ p: 1.1, borderTop: '1px solid #e2e8f0', fontWeight: 700 }}>17</Box>
+                  </Box>
+                </Box>
+              </Box>
+            </Box>
+          </Box>
+
+          <Box sx={{ border: '1px solid #d8dee8', borderRadius: 2, overflow: 'hidden', bgcolor: 'background.paper' }}>
+            <Box sx={{ p: 1.5, borderBottom: '1px solid #e2e8f0', bgcolor: '#f8fafc' }}>
+              <Typography variant="subtitle1" sx={{ fontWeight: 700 }}>
+                Разпределение на учителите по квалификация (2011 г.)
+              </Typography>
+            </Box>
+            <Box sx={{ overflowX: 'auto' }}>
+              <Box component="table" sx={{ width: '100%', borderCollapse: 'collapse', minWidth: 760 }}>
+                <Box component="thead">
+                  <Box component="tr">
+                    <Box component="th" sx={{ p: 1.1, borderBottom: '1px solid #e2e8f0', textAlign: 'left', width: 220 }}>Образование</Box>
+                    <Box component="th" sx={{ p: 1.1, borderBottom: '1px solid #e2e8f0', textAlign: 'left' }}>Квалификация</Box>
+                    <Box component="th" sx={{ p: 1.1, borderBottom: '1px solid #e2e8f0', textAlign: 'left', width: 100 }}>Брой</Box>
+                  </Box>
+                </Box>
+                <Box component="tbody">
+                  {educationTeachers.map((row, i) => (
+                    <Box component="tr" key={`t-${i}`}>
+                      <Box component="td" sx={{ p: 1.1, borderBottom: '1px solid #f1f5f9' }}>{row.edu}</Box>
+                      <Box component="td" sx={{ p: 1.1, borderBottom: '1px solid #f1f5f9' }}>{row.qualification}</Box>
+                      <Box component="td" sx={{ p: 1.1, borderBottom: '1px solid #f1f5f9' }}>{row.count}</Box>
+                    </Box>
+                  ))}
+                  <Box component="tr">
+                    <Box component="td" />
+                    <Box component="td" sx={{ p: 1.1, borderTop: '1px solid #e2e8f0', fontWeight: 700 }}>ВСИЧКО</Box>
+                    <Box component="td" sx={{ p: 1.1, borderTop: '1px solid #e2e8f0', fontWeight: 700 }}>196</Box>
+                  </Box>
+                </Box>
+              </Box>
+            </Box>
+          </Box>
+
+          <Box sx={{ border: '1px solid #d8dee8', borderRadius: 2, overflow: 'hidden', bgcolor: 'background.paper' }}>
+            <Box sx={{ p: 1.5, borderBottom: '1px solid #e2e8f0', bgcolor: '#f8fafc' }}>
+              <Typography variant="subtitle1" sx={{ fontWeight: 700 }}>
+                Разпределение на учениците по училища (2011 г.)
+              </Typography>
+            </Box>
+            <Box sx={{ overflowX: 'auto' }}>
+              <Box component="table" sx={{ width: '100%', borderCollapse: 'collapse', minWidth: 640 }}>
+                <Box component="thead">
+                  <Box component="tr">
+                    <Box component="th" sx={{ p: 1.1, borderBottom: '1px solid #e2e8f0', textAlign: 'left', width: 60 }}>№</Box>
+                    <Box component="th" sx={{ p: 1.1, borderBottom: '1px solid #e2e8f0', textAlign: 'left' }}>Учебно заведение</Box>
+                    <Box component="th" sx={{ p: 1.1, borderBottom: '1px solid #e2e8f0', textAlign: 'left', width: 120 }}>Брой ученици</Box>
+                  </Box>
+                </Box>
+                <Box component="tbody">
+                  {educationStudents.map((row) => (
+                    <Box component="tr" key={`s-${row.idx}`}>
+                      <Box component="td" sx={{ p: 1.1, borderBottom: '1px solid #f1f5f9' }}>{row.idx}</Box>
+                      <Box component="td" sx={{ p: 1.1, borderBottom: '1px solid #f1f5f9' }}>{row.school}</Box>
+                      <Box component="td" sx={{ p: 1.1, borderBottom: '1px solid #f1f5f9' }}>{row.count}</Box>
+                    </Box>
+                  ))}
+                  <Box component="tr">
+                    <Box component="td" />
+                    <Box component="td" sx={{ p: 1.1, borderTop: '1px solid #e2e8f0', fontWeight: 700 }}>ВСИЧКО</Box>
+                    <Box component="td" sx={{ p: 1.1, borderTop: '1px solid #e2e8f0', fontWeight: 700 }}>2097</Box>
+                  </Box>
+                </Box>
+              </Box>
+            </Box>
+          </Box>
+
+          <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' }, gap: 2 }}>
+            <Box sx={{ border: '1px solid #d8dee8', borderRadius: 2, p: 2, bgcolor: 'background.paper', borderLeft: '4px solid #22c55e' }}>
+              <Typography variant="subtitle1" sx={{ fontWeight: 700, mb: 0.8 }}>
+                Предучилищно възпитание и обучение
+              </Typography>
+              <Typography variant="body2" color="text.secondary" sx={{ lineHeight: 1.75 }}>
+                Предучилищното възпитание се осъществява в 7 детски градини. В тях се работи за емоционалното и
+                естетическо развитие на детето чрез съчетаване на общообразователни и възпитателни взаимодействия за
+                утвърждаване на детската индивидуалност.
+              </Typography>
+            </Box>
+            <Box sx={{ border: '1px solid #d8dee8', borderRadius: 2, p: 2, bgcolor: 'background.paper', borderLeft: '4px solid #0ea5e9' }}>
+              <Typography variant="subtitle1" sx={{ fontWeight: 700, mb: 0.8 }}>
+                Начално и основно образование
+              </Typography>
+              <Typography variant="body2" color="text.secondary" sx={{ lineHeight: 1.75 }}>
+                Началното образование се осъществява в две начални училища, четири основни и едно средно училище.
+                Основното образование се провежда в 5 училища, от които 4 основни и 1 СОУ, включително училище в с.
+                Радилово.
+              </Typography>
+            </Box>
+            <Box sx={{ border: '1px solid #d8dee8', borderRadius: 2, p: 2, bgcolor: 'background.paper', borderLeft: '4px solid #8b5cf6' }}>
+              <Typography variant="subtitle1" sx={{ fontWeight: 700, mb: 0.8 }}>
+                Средно образование
+              </Typography>
+              <Typography variant="body2" color="text.secondary" sx={{ lineHeight: 1.75 }}>
+                СОУ „Свети Климент Охридски“ съчетава традиции и съвременни профили. От 9 до 12 клас предлага
+                „Технологичен“ профил с направления „Туризъм“, „Информационни технологии“ и „Предприемачество и бизнес“.
+              </Typography>
+            </Box>
+            <Box sx={{ border: '1px solid #d8dee8', borderRadius: 2, p: 2, bgcolor: 'background.paper', borderLeft: '4px solid #f59e0b' }}>
+              <Typography variant="subtitle1" sx={{ fontWeight: 700, mb: 0.8 }}>
+                Професионални гимназии
+              </Typography>
+              <Typography variant="body2" color="text.secondary" sx={{ lineHeight: 1.75 }}>
+                ПГ „Васил Левски“ и ПГХВТ „Атанас Ченгелев“ осигуряват професионална подготовка, силна материална база,
+                практика в реална среда и възможности за последваща реализация и обучение във ВУЗ.
+              </Typography>
+            </Box>
+          </Box>
+        </Stack>
+      ) : isTenderDetailPage ? (
+        <Stack spacing={2}>
+          <Button component={RouterLink} to="/razdel/targove-konkursi" variant="outlined" size="small" sx={{ alignSelf: 'flex-start' }}>
+            ← Назад към търгове и конкурси
+          </Button>
+          <Box
+            sx={{
+              border: '1px solid #d8dee8',
+              borderRadius: 2,
+              p: { xs: 2, md: 2.5 },
+              bgcolor: 'background.paper',
+              boxShadow: '0 6px 20px rgba(15, 23, 42, 0.04)',
+            }}
+          >
+            <Typography variant="caption" color="text.secondary" sx={{ fontWeight: 700, display: 'block', mb: 0.5 }}>
+              № {tenderDetail.idx} · {tenderDetail.publishedAt}
+            </Typography>
+            <Typography variant="body2" color="text.secondary" sx={{ mb: 1.5 }}>
+              Прегледи: <strong>{tenderDetail.views}</strong>
+            </Typography>
+            {activeTenderStructured ? (
+              <Stack spacing={2}>
+                {isPlaceholderTenderText ? (
+                  <Typography
+                    variant="overline"
+                    color="text.secondary"
+                    sx={{ fontWeight: 700, letterSpacing: 0.6 }}
+                  >
+                    Примерен текст (плейсхолдър)
+                  </Typography>
+                ) : null}
+                <Typography variant="h5" sx={{ fontWeight: 700, lineHeight: 1.35 }}>
+                  {activeTenderStructured.heading}
+                </Typography>
+                <Box sx={{ border: '1px solid #d8dee8', borderRadius: 2, p: 1.6, bgcolor: 'background.default' }}>
+                  <Typography variant="subtitle1" sx={{ fontWeight: 700, mb: 0.8 }}>
+                    Правно основание
+                  </Typography>
+                  <Typography variant="body2" sx={{ lineHeight: 1.75 }}>
+                    {activeTenderStructured.legalBasis}
+                  </Typography>
+                </Box>
+                <Typography variant="h6" sx={{ fontWeight: 700, mt: 0.5 }}>
+                  НАРЕЖДАМ:
+                </Typography>
+                <Stack spacing={1.2}>
+                  {activeTenderStructured.points.map((point) => (
+                    <Box key={point.id} sx={{ borderLeft: '3px solid #d8dee8', pl: 1.25 }}>
+                      <Typography variant="subtitle2" sx={{ fontWeight: 700, mb: 0.35 }}>
+                        Точка {point.id}
+                      </Typography>
+                      <Typography variant="body1" sx={{ lineHeight: 1.75 }}>
+                        {point.text}
+                      </Typography>
+                      {point.subpoints?.length ? (
+                        <Box component="ul" sx={{ mt: 0.8, mb: 0, pl: 2.5 }}>
+                          {point.subpoints.map((subpoint) => (
+                            <Box component="li" key={subpoint} sx={{ mb: 0.4 }}>
+                              <Typography variant="body2" sx={{ lineHeight: 1.7, color: 'text.primary' }}>
+                                {subpoint}
+                              </Typography>
+                            </Box>
+                          ))}
+                        </Box>
+                      ) : null}
+                    </Box>
+                  ))}
+                </Stack>
+                <Divider />
+                <Box>
+                  <Typography variant="subtitle1" sx={{ fontWeight: 700, mb: 0.6 }}>
+                    Подпис
+                  </Typography>
+                  {activeTenderStructured.signature.map((line) => (
+                    <Typography key={line} variant="body2" sx={{ lineHeight: 1.7, fontWeight: 600 }}>
+                      {line}
+                    </Typography>
+                  ))}
+                </Box>
+              </Stack>
+            ) : tenderDetail.body ? (
+              <Typography
+                component="div"
+                variant="body2"
+                sx={{ whiteSpace: 'pre-wrap', lineHeight: 1.75, color: 'text.primary' }}
+              >
+                {tenderDetail.body}
+              </Typography>
+            ) : (
+              <Box sx={{ border: '1px dashed #cbd5e1', borderRadius: 2, p: 2, bgcolor: '#f8fafc' }}>
+                <Typography variant="subtitle2" sx={{ fontWeight: 700, mb: 1 }}>
+                  Плейсхолдър за съдържание на заповед
+                </Typography>
+                <Stack spacing={1}>
+                  <Typography variant="body2" sx={{ lineHeight: 1.7 }}>
+                    <strong>Правно основание:</strong> [Добавете текста за правното основание и препратките към
+                    съответните нормативни актове.]
+                  </Typography>
+                  <Typography variant="body2" sx={{ lineHeight: 1.7 }}>
+                    <strong>Предмет на търга:</strong> [Опишете обекта/предмета на търга, количества и начални цени.]
+                  </Typography>
+                  <Typography variant="body2" sx={{ lineHeight: 1.7 }}>
+                    <strong>Дата, място и час:</strong> [Добавете дата, място и начален час за провеждане.]
+                  </Typography>
+                  <Typography variant="body2" sx={{ lineHeight: 1.7 }}>
+                    <strong>Документи за участие:</strong> [Избройте изискуемите документи и приложения.]
+                  </Typography>
+                  <Typography variant="body2" sx={{ lineHeight: 1.7 }}>
+                    <strong>Срокове и депозит:</strong> [Добавете краен срок за подаване, депозит и банкова сметка.]
+                  </Typography>
+                  <Typography variant="body2" sx={{ lineHeight: 1.7 }}>
+                    <strong>Допълнителни условия:</strong> [Добавете стъпка за наддаване, оглед, комисия и ред за
+                    обявяване.]
+                  </Typography>
+                </Stack>
+              </Box>
+            )}
+          </Box>
+        </Stack>
+      ) : isElectionDetailPage ? (
+        <Stack spacing={2}>
+          <Button component={RouterLink} to="/razdel/izbori" variant="outlined" size="small" sx={{ alignSelf: 'flex-start' }}>
+            ← Назад към Избори
+          </Button>
+          <Box sx={{ border: '1px solid #d8dee8', borderRadius: 2, p: { xs: 2, md: 2.5 }, bgcolor: 'background.paper' }}>
+            <Typography variant="overline" color="text.secondary">
+              Категория: {electionDetail.category}
+            </Typography>
+            <Typography variant="h5" sx={{ fontWeight: 700, mt: 0.5, mb: 1 }}>
+              {electionDetail.title}
+            </Typography>
+            <Typography variant="body2" color="text.secondary" sx={{ mb: 1.25 }}>
+              Статии: {electionDetail.articleCount}
+            </Typography>
+            <Typography variant="body1" sx={{ lineHeight: 1.8 }}>
+              {electionDetail.summary}
+            </Typography>
+          </Box>
+        </Stack>
+      ) : isPublicRegistersPage ? (
+        <Stack spacing={2}>
+          <Box
+            sx={{
+              border: '1px solid #d8dee8',
+              borderRadius: 2,
+              p: { xs: 2, md: 2.5 },
+              background: 'linear-gradient(180deg, #f8fafc 0%, #ffffff 100%)',
+              boxShadow: '0 8px 24px rgba(15, 23, 42, 0.06)',
+            }}
+          >
+            <Typography variant="overline" color="text.secondary" sx={{ letterSpacing: 0.7 }}>
+              Общински съвет - Публични регистри
+            </Typography>
+            <Typography variant="h4" sx={{ fontWeight: 800, mb: 0.5 }}>
+              Публичен регистър на предложенията за провеждане на местен референдум
+            </Typography>
+            <Typography variant="body2" color="text.secondary">
+              Вторник, 21 Април 2020г. 15:51ч.
+            </Typography>
+          </Box>
+
+          <Box sx={{ border: '1px solid #d8dee8', borderRadius: 2, p: { xs: 2, md: 2.5 }, bgcolor: 'background.paper' }}>
+            <Typography variant="h6" sx={{ fontWeight: 700, mb: 1.2 }}>
+              ПУБЛИЧЕН РЕГИСТЪР НА ПРЕДЛОЖЕНИЯТА ЗА ПРОВЕЖДАНЕ НА МЕСТЕН РЕФЕРЕНДУМ
+            </Typography>
+
+            <TableContainer sx={{ overflowX: 'auto', border: '1px solid #e2e8f0', borderRadius: 1.5 }}>
+              <Table size="small" sx={{ minWidth: 1120, '& .MuiTableCell-root': { verticalAlign: 'top' } }}>
+                <TableHead sx={{ bgcolor: '#f8fafc' }}>
+                  <TableRow>
+                    <TableCell sx={{ fontWeight: 700, width: 52 }}>№</TableCell>
+                    <TableCell sx={{ fontWeight: 700, width: 130 }}>Дата на въвеждане</TableCell>
+                    <TableCell sx={{ fontWeight: 700, width: 105 }}>Актуалност</TableCell>
+                    <TableCell sx={{ fontWeight: 700, width: 140 }}>Регистрация</TableCell>
+                    <TableCell sx={{ fontWeight: 700, minWidth: 280 }}>Инициатива за произвеждане</TableCell>
+                    <TableCell sx={{ fontWeight: 700, minWidth: 340 }}>Основни въпроси</TableCell>
+                    <TableCell sx={{ fontWeight: 700, width: 170 }}>Номер на решение</TableCell>
+                    <TableCell sx={{ fontWeight: 700, width: 130 }}>Насрочен за дата</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  <TableRow hover>
+                    <TableCell>1</TableCell>
+                    <TableCell>21.04.2020г.</TableCell>
+                    <TableCell>активен</TableCell>
+                    <TableCell>К-ОБС-99 / 21.04.2020г.</TableCell>
+                    <TableCell>
+                      Инициативен комитет за иницииране на подписка за произвеждане на местен референдум против
+                      инвестиционно предложение на „Грийнбърн“ ЕООД за изграждане на депо за опасни отпадъци към
+                      инсталация за изгаряне на отпадъци на „Грийнбърн“ ЕООД.
+                    </TableCell>
+                    <TableCell>
+                      <Box component="ol" sx={{ m: 0, pl: 2.1 }}>
+                        <Typography component="li" variant="body2" sx={{ lineHeight: 1.6, mb: 0.6 }}>
+                          Против ли сте да бъде изградено депо за опасни отпадъци от „Грийнбърн“ ЕООД към инсталация
+                          за изгаряне на опасни отпадъци на „Грийнбърн“ ЕООД гр. Пещера или друга компания с идентично
+                          инвестиционно предложение?
+                        </Typography>
+                        <Typography component="li" variant="body2" sx={{ lineHeight: 1.6, mb: 0.6 }}>
+                          Против ли сте функционирането на вече изградената инсталация за изгаряне на отпадъци на
+                          „Грийнбърн“ ЕООД?
+                        </Typography>
+                        <Typography component="li" variant="body2" sx={{ lineHeight: 1.6 }}>
+                          Подкрепяте ли Кмета на Община Пещера и Председателя на Общински съвет - Пещера да инициират
+                          процедура и да извършат необходимите правни и организационни действия, съобразно своята
+                          компетентност така, че да не бъде допуснато изграждане на депо за опасни отпадъци?
+                        </Typography>
+                      </Box>
+                    </TableCell>
+                    <TableCell>№91/09.06.2020год. на ОбС</TableCell>
+                    <TableCell>-</TableCell>
+                  </TableRow>
+                </TableBody>
+              </Table>
+            </TableContainer>
+          </Box>
+        </Stack>
+      ) : isElectronicServicesPage ? (
+        <Stack spacing={2}>
+          <Box sx={{ border: '1px solid #d8dee8', borderRadius: 2, p: { xs: 2, md: 2.5 }, background: 'linear-gradient(180deg, #f8fafc 0%, #ffffff 100%)', boxShadow: '0 8px 24px rgba(15, 23, 42, 0.06)' }}>
+            <Typography variant="overline" color="text.secondary" sx={{ letterSpacing: 0.7 }}>
+              Общинска Администрация - е-Община
+            </Typography>
+            <Typography variant="h4" sx={{ fontWeight: 800, mb: 0.6 }}>
+              Електронни услуги
+            </Typography>
+            <Typography variant="body2" color="text.secondary">
+              Клип електронни услуги, условия за идентификация и регистър на предоставяните ЕАУ.
+            </Typography>
+          </Box>
+
+          <Box sx={{ border: '1px solid #d8dee8', borderRadius: 2, p: 2, bgcolor: 'background.paper' }}>
+            <Typography variant="subtitle1" sx={{ fontWeight: 700, mb: 1 }}>Начини за идентификация</Typography>
+            <Box component="ul" sx={{ mt: 0, mb: 1, pl: 2.3 }}>
+              {['Квалифициран електронен подпис - КЕП', 'Мобилен КЕП "Борика"', 'Мобилен КЕП "Евротръст"', 'ПИК на НАП', 'ПИК на НОИ'].map((m) => (
+                <Box key={m} component="li"><Typography variant="body2">{m}</Typography></Box>
+              ))}
+            </Box>
+            <Typography variant="body2" sx={{ lineHeight: 1.75 }}>
+              При електронна автентикация с квалифициран електронен подпис е необходимо подписът да съдържа ЕГН на
+              автора, съгласно § 1, т.22 от допълнителните разпоредби на Закона за електронното управление и § 5 от
+              Наредбата за общите изисквания към информационните системи, регистрите и електронните административни услуги.
+            </Typography>
+            <Box component="ul" sx={{ mt: 1, mb: 0, pl: 2.3 }}>
+              <Box component="li"><Typography variant="body2">Ниво „високо“ - КЕП;</Typography></Box>
+              <Box component="li"><Typography variant="body2">Ниво „значително“ - ПИК на НАП/НОИ/УКД на НЗОК + еднократна парола;</Typography></Box>
+              <Box component="li"><Typography variant="body2">Ниво „ниско“ - ПИК на НАП/НОИ/УКД на НЗОК.</Typography></Box>
+            </Box>
+          </Box>
+
+          <Box sx={{ border: '1px solid #d8dee8', borderRadius: 2, p: 2, bgcolor: 'background.paper' }}>
+            <Typography variant="subtitle1" sx={{ fontWeight: 700, mb: 1 }}>Помощни видеоматериали за заявяване на ЕАУ</Typography>
+            <Stack spacing={1}>
+              {electronicHelpVideos.map((v) => (
+                <Box
+                  key={v}
+                  sx={{
+                    border: '1px solid #e2e8f0',
+                    borderRadius: 1.5,
+                    p: 1,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    gap: 1,
+                    bgcolor: '#f8fafc',
+                  }}
+                >
+                  <Typography variant="body2" sx={{ fontWeight: 500 }}>
+                    {v}
+                  </Typography>
+                  <Button
+                    component="a"
+                    href={`https://www.youtube.com/results?search_query=${encodeURIComponent(v)}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    size="small"
+                    variant="outlined"
+                  >
+                    Гледай
+                  </Button>
+                </Box>
+              ))}
+            </Stack>
+          </Box>
+
+          <Box sx={{ border: '1px solid #d8dee8', borderRadius: 2, p: 2, bgcolor: 'background.paper' }}>
+            <Typography variant="subtitle1" sx={{ fontWeight: 700, mb: 1 }}>Раздел · УРИ · Услуга · Нива</Typography>
+            <TableContainer sx={{ overflowX: 'auto', border: '1px solid #e2e8f0', borderRadius: 1.5 }}>
+              <Table size="small" sx={{ minWidth: 1120 }}>
+                <TableHead sx={{ bgcolor: '#f8fafc' }}>
+                  <TableRow>
+                    <TableCell sx={{ fontWeight: 700 }}>Раздел</TableCell>
+                    <TableCell sx={{ fontWeight: 700 }}>№</TableCell>
+                    <TableCell sx={{ fontWeight: 700 }}>УРИ</TableCell>
+                    <TableCell sx={{ fontWeight: 700 }}>Услуга</TableCell>
+                    <TableCell sx={{ fontWeight: 700 }}>Ниво на предоставяне на ЕАУ</TableCell>
+                    <TableCell sx={{ fontWeight: 700 }}>Ниво на осигуреност</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {electronicServicesRows.map(([section, idx, uri, service, level, assurance], rowIndex) => {
+                    const sectionChanged = rowIndex === 0 || electronicServicesRows[rowIndex - 1][0] !== section;
+                    const assuranceChip = getAssuranceChipColor(assurance);
+                    return (
+                    <TableRow key={`${section}-${idx}`} hover sx={sectionChanged ? { '& td': { borderTop: '2px solid #cbd5e1' } } : undefined}>
+                      <TableCell>
+                        <Chip
+                          label={section}
+                          size="small"
+                          sx={{ bgcolor: sectionChanged ? '#e0f2fe' : '#f1f5f9', color: '#0f172a', fontWeight: 700 }}
+                        />
+                      </TableCell>
+                      <TableCell>{idx}</TableCell>
+                      <TableCell>
+                        <Link href={`https://egov.bg/`} target="_blank" rel="noopener noreferrer" underline="hover" sx={{ fontWeight: 700 }}>
+                          {uri}
+                        </Link>
+                      </TableCell>
+                      <TableCell>
+                        <Link href={`https://egov.bg/`} target="_blank" rel="noopener noreferrer" underline="hover" sx={{ fontWeight: 500 }}>
+                          {service}
+                        </Link>
+                      </TableCell>
+                      <TableCell>
+                        {level ? <Chip label={level} size="small" variant="outlined" /> : '-'}
+                      </TableCell>
+                      <TableCell>
+                        {assurance ? (
+                          <Chip
+                            label={assurance}
+                            size="small"
+                            sx={{ bgcolor: assuranceChip.bg, color: assuranceChip.color, fontWeight: 700 }}
+                          />
+                        ) : (
+                          '-'
+                        )}
+                      </TableCell>
+                    </TableRow>
+                  )})}
+                </TableBody>
+              </Table>
+            </TableContainer>
+          </Box>
+        </Stack>
+      ) : isElectionsPage ? (
+        <Stack spacing={2}>
+          <Box
+            sx={{
+              border: '1px solid #d8dee8',
+              borderRadius: 2,
+              p: { xs: 2, md: 2.5 },
+              background: 'linear-gradient(180deg, #f8fafc 0%, #ffffff 100%)',
+              boxShadow: '0 8px 24px rgba(15, 23, 42, 0.06)',
+            }}
+          >
+            <Typography variant="overline" color="text.secondary" sx={{ letterSpacing: 0.7 }}>
+              Община Пещера
+            </Typography>
+            <Typography variant="h4" sx={{ fontWeight: 800, mb: 0.5 }}>
+              Избори
+            </Typography>
+            <Typography variant="body2" color="text.secondary" sx={{ lineHeight: 1.75 }}>
+              Актуална информация за изборни процедури, срокове и електронни услуги.
+            </Typography>
+            <Stack direction="row" spacing={1} flexWrap="wrap" sx={{ mt: 1.3 }}>
+              <Box component="span" sx={{ px: 1, py: 0.35, borderRadius: 999, bgcolor: '#ecfeff', color: '#155e75', fontSize: '0.75rem', fontWeight: 700 }}>
+                Срокове
+              </Box>
+              <Box component="span" sx={{ px: 1, py: 0.35, borderRadius: 999, bgcolor: '#f0fdf4', color: '#166534', fontSize: '0.75rem', fontWeight: 700 }}>
+                Избирателни списъци
+              </Box>
+              <Box component="span" sx={{ px: 1, py: 0.35, borderRadius: 999, bgcolor: '#eff6ff', color: '#1d4ed8', fontSize: '0.75rem', fontWeight: 700 }}>
+                Електронни услуги
+              </Box>
+            </Stack>
+          </Box>
+
+          <Box sx={{ border: '1px solid #d8dee8', borderRadius: 2, p: 2, bgcolor: 'background.paper' }}>
+            <Typography variant="subtitle1" sx={{ fontWeight: 700, mb: 1 }}>
+              УВАЖАЕМИ СЪГРАЖДАНИ,
+            </Typography>
+            <Typography variant="body2" sx={{ lineHeight: 1.75, mb: 1 }}>
+              Тук може да се информирате за:
+            </Typography>
+            <Box component="ul" sx={{ mt: 0, mb: 0, pl: 2.3 }}>
+              {[
+                'Важни дати и срокове за избирателите при провеждане на избори;',
+                'Места за поставяне на агитационни материали;',
+                'Централна избирателна комисия и Общинска избирателна комисия - електронен адрес и данни за контакт;',
+                'Предварителни избирателни списъци;',
+                'Информация за провеждане на консултации;',
+                'Справки и подаване на заявления за корекции и промени в избирателните списъци, в съответствие с разпоредбите на Изборния кодекс.',
+              ].map((item) => (
+                <Box component="li" key={item} sx={{ mb: 0.45 }}>
+                  <Typography variant="body2" sx={{ lineHeight: 1.7 }}>
+                    {item}
+                  </Typography>
+                </Box>
+              ))}
+            </Box>
+          </Box>
+
+          <Box sx={{ border: '1px solid #d8dee8', borderRadius: 2, p: 2, bgcolor: 'background.paper' }}>
+            <Typography variant="subtitle1" sx={{ fontWeight: 700, mb: 1 }}>
+              Електронни услуги за избори
+            </Typography>
+            <Typography variant="body2" sx={{ lineHeight: 1.75, mb: 1 }}>
+              За ваше улеснение прилагаме услугите, които са вписани в регистъра на услугите и техния адрес в портала
+              за електронни услуги.
+            </Typography>
+            <Typography variant="body2" sx={{ lineHeight: 1.75, mb: 1 }}>
+              За да ползвате услугата е необходимо да използвате един от следните начини за идентификация:
+            </Typography>
+            <Box component="ul" sx={{ mt: 0, mb: 1.3, pl: 2.3 }}>
+              {['Квалифициран електронен подпис - КЕП;', 'Мобилен КЕП "Борика";', 'Мобилен КЕП "Евротръст";', 'ПИК на НАП;', 'ПИК на НОИ;'].map((method) => (
+                <Box component="li" key={method}>
+                  <Typography variant="body2" sx={{ lineHeight: 1.7 }}>
+                    {method}
+                  </Typography>
+                </Box>
+              ))}
+            </Box>
+            <Typography variant="body2" sx={{ lineHeight: 1.75, mb: 1 }}>
+              При електронна автентикация с квалифициран електронен подпис е необходимо същия да съдържа информация
+              за ЕГН на автора на подписа, в съответствие с § 1, т.22 от допълнителните разпоредби на Закона за
+              електронното управление при условията на § 5 от Наредбата за общите изисквания към информационните
+              системи, регистрите и електронните адм. услуги.
+            </Typography>
+            <Button component="a" href="https://egov.bg/" target="_blank" rel="noopener noreferrer" variant="contained" size="small" sx={{ mb: 1 }}>
+              Отвори egov.bg
+            </Button>
+            <Typography variant="body2" color="text.secondary" sx={{ mb: 0.8 }}>
+              Услугите са валидни за Избори за Народно събрание на 19.04.2026 г.
+            </Typography>
+            <Stack spacing={0.8}>
+              {[
+                ['3303', 'Вписване в избирателния списък по настоящ адрес'],
+                ['3304', 'Вписване в списъка за гласуване с подвижна избирателна кутия'],
+                ['3305', 'Вписване в избирателния списък'],
+                ['3306', 'Отстраняване на непълноти и грешки в избирателния списък'],
+                ['3307', 'Изключване от Списъка на заличените лица'],
+                ['3308', 'Изключване от Списъка на заличените лица на избирател, заявил, че ще гласува извън страната'],
+              ].map(([code, label]) => (
+                <Box
+                  key={code}
+                  sx={{
+                    border: '1px solid #e2e8f0',
+                    borderRadius: 1.5,
+                    p: 1,
+                    bgcolor: '#f8fafc',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    gap: 1,
+                  }}
+                >
+                  <Typography variant="body2" sx={{ lineHeight: 1.7 }}>
+                    <strong>{code}</strong> {label}
+                  </Typography>
+                  <Button component="a" href="https://egov.bg/" target="_blank" rel="noopener noreferrer" size="small" variant="outlined">
+                    Отвори
+                  </Button>
+                </Box>
+              ))}
+            </Stack>
+          </Box>
+
+          <Box sx={{ border: '1px solid #d8dee8', borderRadius: 2, p: 2, bgcolor: 'background.paper' }}>
+            <Typography variant="subtitle1" sx={{ fontWeight: 700, mb: 1 }}>
+              Архив и кампании
+            </Typography>
+            <Stack spacing={1.1}>
+              {electionsPages.map((campaign) => (
+                <Box key={campaign.slug} sx={{ p: 1.2, borderRadius: 1.5, bgcolor: '#f8fafc', border: '1px solid #e2e8f0' }}>
+                  <Typography
+                    component={RouterLink}
+                    to={`/razdel/izbori/${campaign.slug}`}
+                    variant="body1"
+                    sx={{ fontWeight: 700, color: 'primary.main', textDecoration: 'none', '&:hover': { textDecoration: 'underline' } }}
+                  >
+                    {campaign.title}
+                  </Typography>
+                  <Typography variant="caption" color="text.secondary">
+                    {campaign.articleCount} статии · {campaign.category}
+                  </Typography>
+                  <Box sx={{ mt: 0.8 }}>
+                    <Button component={RouterLink} to={`/razdel/izbori/${campaign.slug}`} size="small" variant="outlined">
+                      Виж подробности
+                    </Button>
+                  </Box>
+                </Box>
+              ))}
+            </Stack>
+          </Box>
+        </Stack>
+      ) : isMunicipalPlansPage ? (
+        <Stack spacing={2}>
+          <Box
+            sx={{
+              border: '1px solid #d8dee8',
+              borderRadius: 2,
+              p: { xs: 2, md: 2.5 },
+              background: 'linear-gradient(180deg, #f8fafc 0%, #ffffff 100%)',
+              boxShadow: '0 8px 24px rgba(15, 23, 42, 0.06)',
+            }}
+          >
+            <Typography variant="overline" color="text.secondary" sx={{ letterSpacing: 0.7 }}>
+              Стратегически документи
+            </Typography>
+            <Typography variant="h4" sx={{ fontWeight: 800, mb: 0.5 }}>
+              Общински планове
+            </Typography>
+            <Typography variant="body2" color="text.secondary" sx={{ lineHeight: 1.75 }}>
+              Община Пещера - Стратегически документи
+            </Typography>
+          </Box>
+
+          <Stack spacing={1.5}>
+            <Box sx={{ border: '1px solid #d8dee8', borderRadius: 2, p: 2, bgcolor: 'background.paper' }}>
+              <Typography variant="h6" sx={{ fontWeight: 700, mb: 0.6 }}>
+                ПЛАН ЗА УСТОЙЧИВА ГРАДСКА МОБИЛНОСТ НА ОБЩИНА ПЕЩЕРА
+              </Typography>
+              <Typography variant="body1" sx={{ lineHeight: 1.75 }}>
+                За периода 2023-2030
+              </Typography>
+            </Box>
+
+            <Box sx={{ border: '1px solid #d8dee8', borderRadius: 2, p: 2, bgcolor: 'background.paper' }}>
+              <Typography variant="h6" sx={{ fontWeight: 700, mb: 0.6 }}>
+                ДОКЛАД
+              </Typography>
+              <Typography variant="body1" sx={{ lineHeight: 1.75 }}>
+                ЗА РЕЗУЛТАТИТЕ ОТ МЕЖДИННА ОЦЕНКА ЗА ИЗПЪЛНЕНИЕ НА ПЛАН ЗА ИНТЕГРИРАНО РАЗВИТИЕ НА ОБЩИНА ПЕЩЕРА
+                2021-2027г.
+              </Typography>
+            </Box>
+
+            <Box sx={{ border: '1px solid #d8dee8', borderRadius: 2, p: 2, bgcolor: 'background.paper' }}>
+              <Typography variant="h6" sx={{ fontWeight: 700, mb: 0.8 }}>
+                ПЛАН ЗА ИНТЕГРИРАНО РАЗВИТИЕ НА ОБЩИНА ПЕЩЕРА
+              </Typography>
+              <Stack spacing={0.4}>
+                <Typography variant="body1">За периода 2021-2027г.</Typography>
+                <Typography variant="body1">За периода 2014 -2020г.</Typography>
+              </Stack>
+            </Box>
+
+            <Box sx={{ border: '1px solid #d8dee8', borderRadius: 2, p: 2, bgcolor: 'background.paper' }}>
+              <Typography variant="h6" sx={{ fontWeight: 700, mb: 0.8 }}>
+                ОБЩИНСКИ ГОДИШЕН ПЛАН ЗА СОЦИАЛНИТЕ УСЛУГИ НА ТЕРИТОРИЯТА НА ОБЩИНА ПЕЩЕРА
+              </Typography>
+              <Typography variant="body1" sx={{ lineHeight: 1.75 }}>
+                ОБЩИНСКИ ГОДИШЕН ПЛАН ЗА СОЦИАЛНИТЕ УСЛУГИ ПРЕЗ 2026 г. НА ТЕРИТОРИЯТА НА ОБЩИНА ПЕЩЕРА
+              </Typography>
+              <Typography variant="body2" color="text.secondary" sx={{ mt: 0.7 }}>
+                Приет с Решение №281/31.07.2025г. на Общински съвет Пещера
+              </Typography>
+            </Box>
+
+            <Box sx={{ border: '1px solid #d8dee8', borderRadius: 2, p: 2, bgcolor: 'background.paper' }}>
+              <Typography variant="h6" sx={{ fontWeight: 700 }}>
+                ПЛАН ЗА ДЕЙСТВИЕ НА ОБЩИНСКИТЕ КОНЦЕСИИ НА ОБЩИНА ПЕЩЕРА
+              </Typography>
+              <Typography variant="body2" color="text.secondary" sx={{ mt: 0.6 }}>
+                за периода 2022-2027 г.
+              </Typography>
+            </Box>
+
+            <Box sx={{ border: '1px solid #d8dee8', borderRadius: 2, p: 2, bgcolor: 'background.paper' }}>
+              <Typography variant="h6" sx={{ fontWeight: 700, mb: 0.8 }}>
+                ГОДИШЕН ПЛАН ЗА ПАША ЗА ЗЕМЛИЩАТА НА ОБЩИНА ПЕЩЕРА
+              </Typography>
+              <Stack spacing={0.4}>
+                <Typography variant="body1">За стопанската 2023г. - 2024г.</Typography>
+                <Typography variant="body1">За стопанската 2022г.- 2023г.</Typography>
+                <Typography variant="body1">За стопанската 2021г.- 2022г.</Typography>
+              </Stack>
+            </Box>
+
+            <Box sx={{ border: '1px solid #d8dee8', borderRadius: 2, p: 2, bgcolor: 'background.paper' }}>
+              <Typography variant="h6" sx={{ fontWeight: 700, mb: 0.6 }}>
+                Актуализаран План за действие на Община Пещера /2014-2017 г./ за изпълнение на Стратегия за
+                интегриране на ромите в Област Пазарджик 2012 – 2020
+              </Typography>
+              <Typography variant="body2" color="text.secondary">
+                Приет с Решение № 255/28,02,2017г. на Общински съвет - Пещера
+              </Typography>
+            </Box>
+
+            <Box sx={{ border: '1px solid #d8dee8', borderRadius: 2, p: 2, bgcolor: 'background.paper' }}>
+              <Typography variant="h6" sx={{ fontWeight: 700, mb: 0.8 }}>
+                Общински план за развитие на Община Пещера
+              </Typography>
+              <Stack spacing={0.4}>
+                <Typography variant="body1">Програма за реализация</Typography>
+                <Typography variant="body1">Предварителна оценка</Typography>
+              </Stack>
+              <Typography variant="body2" color="text.secondary" sx={{ mt: 0.7 }}>
+                Приет с Решение № 642/15.07.2014г. на Общински съвет - Пещера
+              </Typography>
+            </Box>
+
+            <Box sx={{ border: '1px solid #d8dee8', borderRadius: 2, p: 2, bgcolor: 'background.paper' }}>
+              <Typography variant="h6" sx={{ fontWeight: 700, mb: 0.6 }}>
+                ОБЩИНСКИ ПЛАН ЗА ДЕЙСТВИЕ за изпълнение на Стратегията за образователна интеграция на децата и
+                учениците от етническите малцинства 2010 – 2015 година в ОБЩИНА ПЕЩЕРА
+              </Typography>
+              <Typography variant="body2" color="text.secondary">
+                Приет с Решение №579/31.08.2010г. на ОбС-Пещера
+              </Typography>
+            </Box>
+          </Stack>
+        </Stack>
+      ) : isTendersPage ? (
+        <Stack spacing={2}>
+          <Box
+            sx={{
+              border: '1px solid #d8dee8',
+              borderRadius: 2,
+              p: { xs: 2, md: 2.5 },
+              background: 'linear-gradient(180deg, #f8fafc 0%, #ffffff 100%)',
+              boxShadow: '0 8px 24px rgba(15, 23, 42, 0.06)',
+            }}
+          >
+            <Typography variant="overline" color="text.secondary" sx={{ letterSpacing: 0.7 }}>
+              Община Пещера
+            </Typography>
+            <Typography variant="h4" sx={{ fontWeight: 800, mb: 0.5 }}>
+              Търгове и конкурси
+            </Typography>
+            <Typography variant="body2" color="text.secondary">
+              Архив на заповеди с филтриране по заглавие и година.
+            </Typography>
+          </Box>
+
+          <Box sx={{ border: '1px solid #d8dee8', borderRadius: 2, p: 1.5, bgcolor: 'background.paper' }}>
+            <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: '2fr 1fr' }, gap: 1.25 }}>
+              <TextField
+                size="small"
+                label="Филтриране по заглавие"
+                value={tendersSearch}
+                onChange={(e) => setTendersSearch(e.target.value)}
+                fullWidth
+              />
+              <TextField
+                size="small"
+                select
+                label="Филтър по година"
+                value={tendersYear}
+                onChange={(e) => setTendersYear(e.target.value)}
+                fullWidth
+              >
+                <MenuItem value="all">Всички години</MenuItem>
+                {availableTenderYears.map((year) => (
+                  <MenuItem key={year} value={year}>
+                    {year}
+                  </MenuItem>
+                ))}
+              </TextField>
+            </Box>
+          </Box>
+
+          {filteredTenders.length === 0 ? (
+            <Box sx={{ border: '1px solid #d8dee8', borderRadius: 2, p: 2, bgcolor: 'background.paper', textAlign: 'center', color: 'text.secondary' }}>
+              Няма резултати за избраните филтри.
+            </Box>
+          ) : (
+            <Box sx={{ display: 'grid', gridTemplateColumns: '1fr', gap: 1.5 }}>
+              {filteredTenders.map((row) => (
+                <Box
+                  key={row.idx}
+                  sx={{
+                    border: '1px solid #d8dee8',
+                    borderRadius: 2,
+                    p: 1.6,
+                    bgcolor: 'background.paper',
+                    boxShadow: '0 6px 20px rgba(15, 23, 42, 0.04)',
+                  }}
+                >
+                  <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 0.8 }}>
+                    <Typography variant="caption" color="text.secondary" sx={{ fontWeight: 700 }}>
+                      № {row.idx}
+                    </Typography>
+                    <Box
+                      component="span"
+                      sx={{
+                        px: 1,
+                        py: 0.25,
+                        borderRadius: 999,
+                        bgcolor: '#f1f5f9',
+                        color: '#0f172a',
+                        fontSize: '0.72rem',
+                        fontWeight: 700,
+                      }}
+                    >
+                      {row.year}
+                    </Box>
+                  </Stack>
+                  <Typography
+                    component={RouterLink}
+                    to={`/razdel/targove-konkursi/${row.slug}`}
+                    variant="subtitle1"
+                    sx={{
+                      fontWeight: 700,
+                      lineHeight: 1.4,
+                      mb: 0.8,
+                      display: 'block',
+                      color: 'primary.main',
+                      textDecoration: 'none',
+                      '&:hover': { textDecoration: 'underline' },
+                    }}
+                  >
+                    {row.title}
+                  </Typography>
+                  <Typography variant="body2" color="text.secondary" sx={{ lineHeight: 1.65 }}>
+                    {row.publishedAt}
+                  </Typography>
+                  <Typography variant="body2" color="text.secondary" sx={{ mt: 0.8 }}>
+                    Прегледи: <strong>{row.views}</strong>
+                  </Typography>
+                </Box>
+              ))}
+            </Box>
+          )}
+        </Stack>
+      ) : isEnergyEfficiencyPage ? (
+        <Stack spacing={2}>
+          <Box
+            sx={{
+              border: '1px solid #d8dee8',
+              borderRadius: 2,
+              p: { xs: 2, md: 2.5 },
+              background: 'linear-gradient(180deg, #f8fafc 0%, #ffffff 100%)',
+              boxShadow: '0 8px 24px rgba(15, 23, 42, 0.06)',
+            }}
+          >
+            <Typography variant="overline" color="text.secondary" sx={{ letterSpacing: 0.7 }}>
+              Община Пещера · Проекти
+            </Typography>
+            <Typography variant="h4" sx={{ fontWeight: 800, mb: 0.5 }}>
+              Енергийна ефективност
+            </Typography>
+            <Typography variant="body2" color="text.secondary">
+              Договори, отчети, новини и файлове за изтегляне.
+            </Typography>
+          </Box>
+
+          <Box sx={{ border: '1px solid #d8dee8', borderRadius: 2, p: 2, bgcolor: 'background.paper' }}>
+            <Typography variant="h6" sx={{ fontWeight: 700, mb: 1 }}>
+              Договори по проекти
+            </Typography>
+            <Stack spacing={0.8}>
+              {energyContracts.map(([label, href]) => (
+                <Link key={label} href={href} target="_blank" rel="noopener noreferrer" underline="hover" sx={{ fontWeight: 500 }}>
+                  {label}
+                </Link>
+              ))}
+            </Stack>
+          </Box>
+
+          <Box sx={{ border: '1px solid #d8dee8', borderRadius: 2, p: 2, bgcolor: 'background.paper' }}>
+            <Typography variant="h6" sx={{ fontWeight: 700, mb: 1 }}>
+              Годишни отчети
+            </Typography>
+            <Stack spacing={0.8}>
+              {energyReports.map(([label, href]) => (
+                <Link key={label} href={href} target="_blank" rel="noopener noreferrer" underline="hover">
+                  {label}
+                </Link>
+              ))}
+            </Stack>
+          </Box>
+
+          <Box sx={{ border: '1px solid #d8dee8', borderRadius: 2, p: 2, bgcolor: 'background.paper' }}>
+            <Typography variant="h6" sx={{ fontWeight: 700, mb: 1 }}>
+              Новини
+            </Typography>
+            <Stack spacing={1}>
+              <Box sx={{ p: 1.25, borderRadius: 1.5, border: '1px solid #e2e8f0', bgcolor: '#f8fafc' }}>
+                <Typography variant="subtitle2" sx={{ fontWeight: 700, mb: 0.4 }}>
+                  Регистър на подадени заявления за интерес и финансова помощ
+                </Typography>
+                <Typography variant="body2" color="text.secondary">
+                  Процедура BG16RFOP001-2.001 „Енергийна ефективност в периферните райони“.
+                </Typography>
+              </Box>
+              <Box sx={{ p: 1.25, borderRadius: 1.5, border: '1px solid #e2e8f0', bgcolor: '#f8fafc' }}>
+                <Typography variant="subtitle2" sx={{ fontWeight: 700, mb: 0.4 }}>
+                  Информация и прессъобщения
+                </Typography>
+                <Typography variant="body2" color="text.secondary">
+                  Краткорезюме на процедурата, важни съобщения и прессъобщения по договорите.
+                </Typography>
+              </Box>
+            </Stack>
+          </Box>
+
+          <Box sx={{ border: '1px solid #d8dee8', borderRadius: 2, p: 2, bgcolor: 'background.paper' }}>
+            <Typography variant="h6" sx={{ fontWeight: 700, mb: 1 }}>
+              Файлове за изтегляне
+            </Typography>
+            <TableContainer sx={{ overflowX: 'auto', border: '1px solid #e2e8f0', borderRadius: 1.5 }}>
+              <Table size="small">
+                <TableHead sx={{ bgcolor: '#f8fafc' }}>
+                  <TableRow>
+                    <TableCell sx={{ fontWeight: 700 }}>Файл</TableCell>
+                    <TableCell sx={{ fontWeight: 700, width: 120 }}>Размер</TableCell>
+                    <TableCell sx={{ fontWeight: 700, width: 140 }}>Действие</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {energyDownloads.map(([name, href, size]) => (
+                    <TableRow key={name} hover>
+                      <TableCell>
+                        <Link href={href} target="_blank" rel="noopener noreferrer" underline="hover">
+                          {name}
+                        </Link>
+                      </TableCell>
+                      <TableCell>{size}</TableCell>
+                      <TableCell>
+                        <Button component="a" href={href} target="_blank" rel="noopener noreferrer" size="small" variant="outlined">
+                          Изтегли
+                        </Button>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </TableContainer>
+          </Box>
+        </Stack>
+      ) : isTourismPage ? (
+        <Stack spacing={2}>
+          <Box
+            sx={{
+              border: '1px solid #d8dee8',
+              borderRadius: 2,
+              p: { xs: 2, md: 2.5 },
+              background: 'linear-gradient(180deg, #f8fafc 0%, #ffffff 100%)',
+              boxShadow: '0 8px 24px rgba(15, 23, 42, 0.06)',
+            }}
+          >
+            <Typography variant="overline" color="text.secondary" sx={{ letterSpacing: 0.7 }}>
+              Община Пещера
+            </Typography>
+            <Typography variant="h4" sx={{ fontWeight: 800, mb: 0.6 }}>
+              Туризъм
+            </Typography>
+            <Typography variant="body2" color="text.secondary" sx={{ lineHeight: 1.75 }}>
+              Едно малко кътче от земния рай наречен България е община Пещера, простираща се от изток на запад в полите
+              на Родопите на надморска височина от 450 до 1350 метра.
+            </Typography>
+            <Typography variant="body2" color="text.secondary" sx={{ lineHeight: 1.75, mt: 1 }}>
+              В този загадъчен край безспорно ви очакват вълнуващи преживявания. Общината граничи на север и
+              северозапад с община Пазарджик, на запад с община Ракитово, на юг и югозапад с община Батак, а на изток с
+              община Брацигово. Разстоянието до София е 140 км, а до Пловдив - 45 км.
+            </Typography>
+          </Box>
+
+          <Box sx={{ border: '1px solid #d8dee8', borderRadius: 2, p: 2, bgcolor: 'background.paper' }}>
+            <Typography variant="subtitle1" sx={{ fontWeight: 700, mb: 1 }}>
+              Съдържание
+            </Typography>
+            <Stack direction="row" flexWrap="wrap" gap={1}>
+              {[
+                ['#tourism', 'Туризъм'],
+                ['#anthro', 'Антропогенни ресурси'],
+                ['#arch', 'Архитектурни обекти'],
+                ['#churches', 'Църкви и параклиси'],
+                ['#museums', 'Музеи'],
+                ['#roads', 'Пътна мрежа и достъп'],
+                ['#health', 'Здравно обслужване'],
+                ['#caves', 'Пещери'],
+                ['#reserves', 'Резервати'],
+                ['#hotels', 'Хотели'],
+              ].map(([href, label]) => (
+                <Link
+                  key={href}
+                  href={href}
+                  underline="none"
+                  sx={{
+                    px: 1.2,
+                    py: 0.45,
+                    borderRadius: 999,
+                    border: '1px solid #cbd5e1',
+                    bgcolor: '#f8fafc',
+                    color: 'text.primary',
+                    fontSize: '0.8rem',
+                    fontWeight: 700,
+                  }}
+                >
+                  {label}
+                </Link>
+              ))}
+            </Stack>
+          </Box>
+
+          <Box id="tourism" sx={{ border: '1px solid #d8dee8', borderRadius: 2, p: 2.5, bgcolor: 'background.paper', scrollMarginTop: 96 }}>
+            <Typography variant="h6" sx={{ fontWeight: 700, mb: 1 }}>
+              Туризъм
+            </Typography>
+            <Typography variant="body2" color="text.secondary" sx={{ lineHeight: 1.75, mb: 0.8 }}>
+              На територията на общината уникално са съчетани климат, природни феномени, географско разположение,
+              животински видове, историческо наследство и природни забележителности.
+            </Typography>
+            <Typography variant="body2" color="text.secondary" sx={{ lineHeight: 1.75 }}>
+              Условията и климатът са изключително благоприятни за климатолечение, възстановяване, зимни спортове,
+              екотуризъм, лов, риболов и спелеология. Да дойдете в магическата планина и да се отдадете на изкушението!
+              Това е вашият избор!
+            </Typography>
+          </Box>
+
+          <Box id="anthro" sx={{ border: '1px solid #d8dee8', borderRadius: 2, p: 2.5, bgcolor: 'background.paper', scrollMarginTop: 96 }}>
+            <Typography variant="h6" sx={{ fontWeight: 700, mb: 1 }}>
+              Антропогенни ресурси
+            </Typography>
+            <Typography variant="body2" color="text.secondary" sx={{ lineHeight: 1.75, mb: 0.8 }}>
+              В културните пластове в околностите на Пещера са намерени остатъци от хилядолетна култура: кюпове,
+              саркофази, фрагменти от керамика, строителни материали, монети, накити, култови предмети, пътища, мостове,
+              крепости и др.
+            </Typography>
+            <Box component="ul" sx={{ m: 0, pl: 2.5 }}>
+              {[
+                'Крепостта “Св. Петка” - разположена на едноименен хълм.',
+                'Селищна могила “Банята” - на 1,5 км западно от с. Капитан Димитриево.',
+                'Тракийските крепости “Киево кале”, “Перун”, “Тъмбра”, “Св. Никола”, “Гагово дере” са разкрити за проучване през 1973 г.',
+                'В пещера “Снежанка” са проучени находки от живота на тракийското племе беси - бронзова игла, глинени съдове и др.',
+              ].map((item) => (
+                <Typography key={item} component="li" variant="body2" color="text.secondary" sx={{ lineHeight: 1.7, mb: 0.5 }}>
+                  {item}
+                </Typography>
+              ))}
+            </Box>
+          </Box>
+
+          <Box id="arch" sx={{ border: '1px solid #d8dee8', borderRadius: 2, p: 2.5, bgcolor: 'background.paper', scrollMarginTop: 96 }}>
+            <Typography variant="h6" sx={{ fontWeight: 700, mb: 1 }}>
+              Архитектурни обекти
+            </Typography>
+            <Typography variant="body2" color="text.secondary" sx={{ lineHeight: 1.75, mb: 0.8 }}>
+              В града има 40 архитектурни обекта, обявени от НИПКИ и Министерството на културата за архитектурни
+              паметници с местно значение.
+            </Typography>
+            <Typography variant="body2" color="text.secondary" sx={{ lineHeight: 1.75, mb: 0.8 }}>
+              През 2002 г. храмът “Св. Димитър” (1825-1831 г.) е утвърден за архитектурен паметник на културата от
+              национално значение.
+            </Typography>
+            <Typography variant="body2" color="text.secondary" sx={{ lineHeight: 1.75 }}>
+              Часовниковата кула, построена между 1650 и 1710 г., е втората по възраст в България след кулата на “Сахат
+              тепе” в Пловдив.
+            </Typography>
+          </Box>
+
+          <Box id="churches" sx={{ border: '1px solid #d8dee8', borderRadius: 2, p: 2.5, bgcolor: 'background.paper', scrollMarginTop: 96 }}>
+            <Typography variant="h6" sx={{ fontWeight: 700, mb: 1 }}>
+              Църкви и параклиси
+            </Typography>
+            <Typography variant="body2" color="text.secondary" sx={{ lineHeight: 1.75, mb: 0.8 }}>
+              Далеч в древността селището е било с десет махали около оброчища, станали след покръстването на траките
+              християнски параклиси: “Св. Марена”, “Св. Атанас”, “Св. Неделя”, “Св. Никола”, “Св. Спас”, “Св. Димитър”,
+              “Св. Петка”, “Св. Варвара”, “Св. Георги”, “Св. Елена и Константин”.
+            </Typography>
+            <Typography variant="body2" color="text.secondary" sx={{ lineHeight: 1.75, mb: 0.8 }}>
+              Във Възрожденска Пещера се издигат “Св. Петка” (около 1710 г.), “Св. Димитър” (1825-1831 г.) и “Св.
+              Богородица” (1864-1865 г.).
+            </Typography>
+            <Typography variant="body2" color="text.secondary" sx={{ lineHeight: 1.75 }}>
+              Със средства от дарителство са ремонтирани параклисите “Св. Георги”, “Св. Спас”, “Св. Елена и Константин”,
+              “Св. Илия”, “Св. Варвара” и “Св. Неделя”. В града има две джамии.
+            </Typography>
+          </Box>
+
+          <Box id="museums" sx={{ border: '1px solid #d8dee8', borderRadius: 2, p: 2.5, bgcolor: 'background.paper', scrollMarginTop: 96 }}>
+            <Typography variant="h6" sx={{ fontWeight: 700, mb: 1 }}>
+              Музеи
+            </Typography>
+            <Typography variant="body2" color="text.secondary" sx={{ lineHeight: 1.75, mb: 0.8 }}>
+              Общински исторически музей е основан на 22.06.1969 г. със статут на музейна сбирка. Експозицията е в пет
+              зали - археология, възраждане, националноосвободително движение и нова история.
+            </Typography>
+            <Typography variant="body2" color="text.secondary" sx={{ lineHeight: 1.75, mb: 0.8 }}>
+              С пет уникални предмета от праисторията музеят участва в изложбата "Златна Тракия" в Брюксел (03.03.2002
+              г.), с което Пещера заема своето място в културната история на Европа.
+            </Typography>
+            <Typography variant="body2" color="text.secondary" sx={{ lineHeight: 1.75 }}>
+              Музейна сбирка функционира и в с. Радилово, отразяваща историята на селото и участието му в Априлското
+              въстание (1876 г.).
+            </Typography>
+          </Box>
+
+          <Box id="roads" sx={{ border: '1px solid #d8dee8', borderRadius: 2, p: 2.5, bgcolor: 'background.paper', scrollMarginTop: 96 }}>
+            <Typography variant="h6" sx={{ fontWeight: 700, mb: 1 }}>
+              Пътна мрежа и достъп
+            </Typography>
+            <Typography variant="body2" color="text.secondary" sx={{ lineHeight: 1.75 }}>
+              Състоянието на пътищата и пътната маркировка на територията на общината се поддържат целогодишно в много
+              добро състояние. Достъпността се осигурява от редовни автобусни линии от Пазарджик, София, Пловдив и
+              съседни общини, а за Пещера - и с влак от Пловдив.
+            </Typography>
+          </Box>
+
+          <Box id="health" sx={{ border: '1px solid #d8dee8', borderRadius: 2, p: 2.5, bgcolor: 'background.paper', scrollMarginTop: 96 }}>
+            <Typography variant="h6" sx={{ fontWeight: 700, mb: 1 }}>
+              Здравно обслужване
+            </Typography>
+            <Typography variant="body2" color="text.secondary" sx={{ lineHeight: 1.75 }}>
+              В общинския център функционират многопрофилна болница за активно лечение, спешна медицинска помощ, три
+              медицински центъра и частни стоматологични кабинети.
+            </Typography>
+          </Box>
+
+          <Box id="caves" sx={{ border: '1px solid #d8dee8', borderRadius: 2, p: 2.5, bgcolor: 'background.paper', scrollMarginTop: 96 }}>
+            <Typography variant="h6" sx={{ fontWeight: 700, mb: 1 }}>
+              Пещери
+            </Typography>
+            <Typography variant="body2" color="text.secondary" sx={{ lineHeight: 1.75, mb: 0.8 }}>
+              Най-голям интерес предизвикват "Снежанка" и "Юбилейна".
+            </Typography>
+            <Typography variant="body2" color="text.secondary" sx={{ lineHeight: 1.75, mb: 0.8 }}>
+              Пещера "Снежанка" е една от седемте най-големи благоустроени пещери в България. Открита е на 3 януари 1961
+              г., дълга е 220 м, с площ 3130 кв.м и над 600 000 сталактити. Намира се на 5 км югозападно от Пещера.
+            </Typography>
+            <Typography variant="body2" color="text.secondary" sx={{ lineHeight: 1.75, mb: 0.8 }}>
+              Пещера "Юбилейна" е открита на 12 февруари 1974 г., с дължина около 1000 м и разнообразни карстови
+              образувания.
+            </Typography>
+            <Typography variant="body2" color="text.secondary" sx={{ lineHeight: 1.75 }}>
+              Изследванията показват, че човекът от бронзовата епоха е познавал "Снежанка" и "Юбилейна" и е търсил в тях
+              подслон, сигурност и вода.
+            </Typography>
+          </Box>
+
+          <Box id="reserves" sx={{ border: '1px solid #d8dee8', borderRadius: 2, p: 2.5, bgcolor: 'background.paper', scrollMarginTop: 96 }}>
+            <Typography variant="h6" sx={{ fontWeight: 700, mb: 1 }}>
+              Резервати
+            </Typography>
+            <Typography variant="subtitle2" sx={{ fontWeight: 700, mb: 0.4 }}>
+              Резерват “Купена”
+            </Typography>
+            <Typography variant="body2" color="text.secondary" sx={{ lineHeight: 1.75, mb: 0.9 }}>
+              Обявен през 1961 г. за биосферен резерват със световно значение под закрилата на ЮНЕСКО. В него има
+              дендрариум и разнообразни дървесни видове, включително защитени птици.
+            </Typography>
+            <Typography variant="subtitle2" sx={{ fontWeight: 700, mb: 0.4 }}>
+              Резерват “Сокола”
+            </Typography>
+            <Typography variant="body2" color="text.secondary" sx={{ lineHeight: 1.75 }}>
+              Обявен през 1973 г., с площ 127.2 ха. Намира се на 8 км западно от Пещера и южно от летовище “Св.
+              Константин”. От “Соколската скала” се открива панорама към Пещера и при ясно време - до Пловдив.
+            </Typography>
+          </Box>
+
+          <Box id="hotels" sx={{ border: '1px solid #d8dee8', borderRadius: 2, p: 2.5, bgcolor: 'background.paper', scrollMarginTop: 96 }}>
+            <Typography variant="h6" sx={{ fontWeight: 700, mb: 1 }}>
+              Хотели
+            </Typography>
+            <Typography variant="subtitle2" sx={{ fontWeight: 700, mb: 0.5 }}>
+              Хотели в гр. Пещера
+            </Typography>
+            <Box component="ul" sx={{ m: 0, pl: 2.5, mb: 1.2 }}>
+              {[
+                'Хотел Домейн Пещера - ул. Михаил Такев 177 Е, резервации: +359 895 525626 / +359 895 525627, e-mail: hotel@domainepeshtera.com',
+                'Комплекс “HEAT” - ул. Михаил Такев №56, моб.: +359 888 334333 / +359 836 626267 / +359 896 626264, стац.: +359 350 6 55 55',
+                'Хотел “НАГИ” - ул. М. Такев 168, телефон: 0350 64051',
+                'Мотел “Синия кайнак” - ул. Михаил Такев №149, телефон: 0886 847 371',
+              ].map((item) => (
+                <Typography key={item} component="li" variant="body2" color="text.secondary" sx={{ lineHeight: 1.7, mb: 0.45 }}>
+                  {item}
+                </Typography>
+              ))}
+            </Box>
+            <Typography variant="subtitle2" sx={{ fontWeight: 700, mb: 0.5 }}>
+              Хотели на летовище “Св. Константин”
+            </Typography>
+            <Box component="ul" sx={{ m: 0, pl: 2.5 }}>
+              {[
+                'Хотел “ДАФ ТРАНС” - резервации: 0350/6 41 74, 6 57 85',
+                'Хотелски комплекс “Вили” - телефон: 0350/6 37 54, 048871991, 0887575025',
+                'Хижа “Румен” към ТД “Купена” - пет модерно обзаведени бунгала със самостоятелен санитарен възел.',
+              ].map((item) => (
+                <Typography key={item} component="li" variant="body2" color="text.secondary" sx={{ lineHeight: 1.7, mb: 0.45 }}>
+                  {item}
+                </Typography>
+              ))}
+            </Box>
+          </Box>
+
+          <Box sx={{ border: '1px solid #d8dee8', borderRadius: 2, p: { xs: 2, md: 2.5 }, bgcolor: 'background.paper', borderLeft: '4px solid #0ea5e9' }}>
+            <Typography variant="h6" sx={{ fontWeight: 700, mb: 1 }}>
+              Допълнителна туристическа информация
+            </Typography>
+            <Typography variant="body2" color="text.secondary" sx={{ lineHeight: 1.75 }}>
+              Към момента в гр. Пещера има 60 категоризирани туристически обекти. Преобладават малките заведения тип
+              кафе-аперитив, има четири ресторанта и една пицария. Сред атрактивните места е комплекс “Нептун”.
+            </Typography>
+            <Typography variant="body2" color="text.secondary" sx={{ lineHeight: 1.75, mt: 1 }}>
+              Пълният списък с туристически обекти, маршрути и места за настаняване се поддържа в общинските
+              информационни раздели.
+            </Typography>
+          </Box>
+        </Stack>
+      ) : isGalleryPage ? (
+        <Stack spacing={2}>
+          <Box
+            sx={{
+              border: '1px solid #d8dee8',
+              borderRadius: 2,
+              p: { xs: 2, md: 2.5 },
+              background: 'linear-gradient(180deg, #f8fafc 0%, #ffffff 100%)',
+              boxShadow: '0 8px 24px rgba(15, 23, 42, 0.06)',
+            }}
+          >
+            <Typography variant="overline" color="text.secondary" sx={{ letterSpacing: 0.7 }}>
+              Община Пещера
+            </Typography>
+            <Typography variant="h4" sx={{ fontWeight: 800, mb: 0.6 }}>
+              Галерия
+            </Typography>
+            <Typography variant="body2" color="text.secondary" sx={{ lineHeight: 1.75 }}>
+              Фото галерия с подбрани кадри от Пещера, културни обекти и символи на общината.
+            </Typography>
+            <Stack direction="row" spacing={1} flexWrap="wrap" sx={{ mt: 1.2 }}>
+              <Chip size="small" label={`${displayedGallery.length} снимки`} sx={{ bgcolor: '#e0f2fe', color: '#0c4a6e', fontWeight: 700 }} />
+              <Chip size="small" label="Клик за уголемяване" sx={{ bgcolor: '#f1f5f9', color: '#0f172a', fontWeight: 700 }} />
+              {galleryFilters.map((f) => (
+                <Chip
+                  key={f}
+                  size="small"
+                  clickable
+                  label={f === 'all' ? 'Всички' : f}
+                  onClick={() => setGalleryFilter(f)}
+                  sx={{
+                    bgcolor: galleryFilter === f ? '#0f172a' : '#eef2ff',
+                    color: galleryFilter === f ? '#fff' : '#3730a3',
+                    fontWeight: 700,
+                  }}
+                />
+              ))}
+            </Stack>
+          </Box>
+
+          <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr', md: 'repeat(12, 1fr)' }, gap: 1.5 }}>
+            {displayedGallery.map((image, idx) => (
+              <Box
+                key={image.src}
+                onClick={() => setGalleryLightbox(image)}
+                sx={{
+                  border: '1px solid #cbd5e1',
+                  borderRadius: 2.5,
+                  overflow: 'hidden',
+                  bgcolor: 'background.paper',
+                  cursor: 'pointer',
+                  transition: 'transform 0.2s ease, box-shadow 0.2s ease',
+                  '&:hover': { transform: 'translateY(-3px)', boxShadow: '0 14px 30px rgba(15,23,42,0.16)' },
+                  gridColumn: { xs: 'span 1', sm: 'span 1', md: idx === 0 ? 'span 6' : idx % 5 === 0 ? 'span 6' : 'span 3' },
+                }}
+              >
+                <Box sx={{ position: 'relative' }}>
+                  <Box
+                    component="img"
+                    src={image.src}
+                    alt={image.title}
+                    sx={{ width: '100%', height: idx === 0 ? 260 : idx % 3 === 0 ? 220 : 180, objectFit: 'cover', display: 'block' }}
+                  />
+                  <Box
+                    sx={{
+                      position: 'absolute',
+                      inset: 'auto 0 0 0',
+                      p: 1,
+                      background: 'linear-gradient(180deg, rgba(2,6,23,0) 0%, rgba(2,6,23,0.82) 100%)',
+                    }}
+                  >
+                    <Typography variant="caption" sx={{ color: '#fff', fontWeight: 700 }}>
+                      {image.title}
+                    </Typography>
+                  </Box>
+                </Box>
+              </Box>
+            ))}
+          </Box>
+
+          <Dialog open={Boolean(galleryLightbox)} onClose={() => setGalleryLightbox(null)} maxWidth="lg" fullWidth>
+            <DialogContent sx={{ p: 0, bgcolor: '#020617' }}>
+              {galleryLightbox ? (
+                <Box sx={{ position: 'relative' }}>
+                  <Box component="img" src={galleryLightbox.src} alt={galleryLightbox.title} sx={{ width: '100%', maxHeight: '78vh', objectFit: 'contain', display: 'block' }} />
+                  <IconButton
+                    aria-label="Затвори"
+                    onClick={() => setGalleryLightbox(null)}
+                    sx={{
+                      position: 'absolute',
+                      right: 10,
+                      top: 10,
+                      bgcolor: 'rgba(2,6,23,0.55)',
+                      color: '#fff',
+                      '&:hover': { bgcolor: 'rgba(2,6,23,0.85)' },
+                    }}
+                  >
+                    <CloseIcon />
+                  </IconButton>
+                  <Button
+                    onClick={prevGalleryImage}
+                    sx={{
+                      position: 'absolute',
+                      left: 12,
+                      top: '50%',
+                      transform: 'translateY(-50%)',
+                      minWidth: 0,
+                      width: 40,
+                      height: 40,
+                      borderRadius: 999,
+                      bgcolor: 'rgba(2,6,23,0.55)',
+                      color: '#fff',
+                      '&:hover': { bgcolor: 'rgba(2,6,23,0.8)' },
+                    }}
+                  >
+                    <ChevronLeftIcon />
+                  </Button>
+                  <Button
+                    onClick={nextGalleryImage}
+                    sx={{
+                      position: 'absolute',
+                      right: 12,
+                      top: '50%',
+                      transform: 'translateY(-50%)',
+                      minWidth: 0,
+                      width: 40,
+                      height: 40,
+                      borderRadius: 999,
+                      bgcolor: 'rgba(2,6,23,0.55)',
+                      color: '#fff',
+                      '&:hover': { bgcolor: 'rgba(2,6,23,0.8)' },
+                    }}
+                  >
+                    <ChevronRightIcon />
+                  </Button>
+                  <Typography variant="body2" sx={{ p: 1.2, color: '#e2e8f0', fontWeight: 700 }}>
+                    {galleryLightbox.title} {galleryActiveIndex >= 0 ? `· ${galleryActiveIndex + 1}/${displayedGallery.length}` : ''}
+                  </Typography>
+                </Box>
+              ) : null}
+            </DialogContent>
+          </Dialog>
+        </Stack>
+      ) : isCulturePage ? (
+        <Stack spacing={2}>
+          <Box
+            sx={{
+              border: '1px solid #d8dee8',
+              borderRadius: 2,
+              p: { xs: 2, md: 2.5 },
+              background: 'linear-gradient(180deg, #f8fafc 0%, #ffffff 100%)',
+              boxShadow: '0 8px 24px rgba(15, 23, 42, 0.06)',
+            }}
+          >
+            <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: '1.4fr 1fr' }, gap: 2 }}>
+              <Box>
+                <Typography variant="overline" color="text.secondary" sx={{ letterSpacing: 0.7 }}>
+                  Община Пещера
+                </Typography>
+                <Typography variant="h4" sx={{ fontWeight: 800, mb: 0.5 }}>
+                  Култура
+                </Typography>
+                <Typography variant="body2" color="text.secondary" sx={{ lineHeight: 1.75 }}>
+                  Културно-историческото наследство на Пещера включва възрожденски храмове, читалищни традиции, музейни
+                  експозиции и изявени личности с национален принос.
+                </Typography>
+                <Stack direction="row" spacing={1} flexWrap="wrap" sx={{ mt: 1.5 }}>
+                  {['Храмове', 'Читалища', 'Музеи', 'Личности'].map((chip) => (
+                    <Box
+                      key={chip}
+                      sx={{
+                        px: 1.2,
+                        py: 0.4,
+                        borderRadius: 999,
+                        bgcolor: '#e2e8f0',
+                        color: '#0f172a',
+                        fontSize: '0.75rem',
+                        fontWeight: 700,
+                      }}
+                    >
+                      {chip}
+                    </Box>
+                  ))}
+                </Stack>
+              </Box>
+              <Box sx={{ borderRadius: 2, overflow: 'hidden', border: '1px solid #cbd5e1' }}>
+                <Box
+                  component="img"
+                  src="/culture-hero-town.png"
+                  alt="Панорамна гледка към град Пещера"
+                  sx={{ width: '100%', height: 180, objectFit: 'cover', display: 'block' }}
+                />
+              </Box>
+            </Box>
+          </Box>
+
+          <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr 1fr', md: 'repeat(4, 1fr)' }, gap: 1.5 }}>
+            <Box sx={{ border: '1px solid #d8dee8', borderRadius: 1.5, p: 1.25, bgcolor: '#f8fafc' }}>
+              <Typography variant="caption" color="text.secondary">
+                Първо светско училище
+              </Typography>
+              <Typography variant="subtitle2" sx={{ fontWeight: 700 }}>
+                1848 г.
+              </Typography>
+            </Box>
+            <Box sx={{ border: '1px solid #d8dee8', borderRadius: 1.5, p: 1.25, bgcolor: '#f8fafc' }}>
+              <Typography variant="caption" color="text.secondary">
+                Читалище „Надежда“
+              </Typography>
+              <Typography variant="subtitle2" sx={{ fontWeight: 700 }}>
+                1873 г.
+              </Typography>
+            </Box>
+            <Box sx={{ border: '1px solid #d8dee8', borderRadius: 1.5, p: 1.25, bgcolor: '#f8fafc' }}>
+              <Typography variant="caption" color="text.secondary">
+                Исторически музей
+              </Typography>
+              <Typography variant="subtitle2" sx={{ fontWeight: 700 }}>
+                от 1969 г.
+              </Typography>
+            </Box>
+            <Box sx={{ border: '1px solid #d8dee8', borderRadius: 1.5, p: 1.25, bgcolor: '#f8fafc' }}>
+              <Typography variant="caption" color="text.secondary">
+                Читалища в общината
+              </Typography>
+              <Typography variant="subtitle2" sx={{ fontWeight: 700 }}>
+                3 + Дом на културата
+              </Typography>
+            </Box>
+          </Box>
+
+          <Box sx={{ border: '1px solid #d8dee8', borderRadius: 2, p: { xs: 2, md: 2.5 }, bgcolor: 'background.paper' }}>
+            <Typography variant="h6" sx={{ fontWeight: 700, mb: 1 }}>
+              Образование и възрожденска традиция
+            </Typography>
+            <Typography variant="body2" color="text.secondary" sx={{ lineHeight: 1.75 }}>
+              Първото светско българско училище в Пещера е създадено през 1848 година, а читалище "Надежда" - през 1873
+              година. Изтъкнат възрожденски учител е Спас Зафиров - учител на Иван Вазов, Христо Ботев и Васил Левски.
+            </Typography>
+          </Box>
+
+          <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr', lg: 'repeat(4, 1fr)' }, gap: 1.5 }}>
+            {cultureGallery.map((item) => (
+              <Box
+                key={item.src}
+                sx={{
+                  border: '1px solid #d8dee8',
+                  borderRadius: 2,
+                  overflow: 'hidden',
+                  bgcolor: 'background.paper',
+                  transition: 'transform 0.2s ease, box-shadow 0.2s ease',
+                  '&:hover': { transform: 'translateY(-2px)', boxShadow: '0 10px 24px rgba(15,23,42,0.12)' },
+                }}
+              >
+                <Box sx={{ position: 'relative' }}>
+                  <Box component="img" src={item.src} alt={item.title} sx={{ width: '100%', height: 170, objectFit: 'cover', display: 'block' }} />
+                  <Box
+                    sx={{
+                      position: 'absolute',
+                      inset: 'auto 0 0 0',
+                      p: 1,
+                      background: 'linear-gradient(180deg, rgba(15,23,42,0) 0%, rgba(15,23,42,0.75) 100%)',
+                    }}
+                  >
+                    <Typography variant="caption" sx={{ color: '#fff', fontWeight: 700 }}>
+                      {item.title}
+                    </Typography>
+                  </Box>
+                </Box>
+              </Box>
+            ))}
+          </Box>
+
+          <Box sx={{ border: '1px solid #d8dee8', borderRadius: 2, p: { xs: 2, md: 2.5 }, bgcolor: 'background.paper', borderLeft: '4px solid #c084fc' }}>
+            <Typography variant="h6" sx={{ fontWeight: 700, mb: 1 }}>
+              Църквата „Св. Димитър“
+            </Typography>
+            <Typography variant="body2" color="text.secondary" sx={{ lineHeight: 1.75, mb: 0.8 }}>
+              Църквата "Св. Димитьр" е един от малкото запазени паметници от епохата на Възраждането в България.
+              Строена е в периода 1825 - 1831 година. Тя е трикорабна, кръстокуполна с притвор и галерия.
+            </Typography>
+            <Typography variant="body2" color="text.secondary" sx={{ lineHeight: 1.75, mb: 0.8 }}>
+              Иконостасът е резбован през 1910 година, но иконите са от 19 век. Особено ценни са „Богородица
+              Одигитрия“, „Велик архангелски събор“ и „Св. Димитър“. Оригинални са и стенописните изображения в
+              интериора на храма.
+            </Typography>
+            <Typography variant="body2" color="text.secondary" sx={{ lineHeight: 1.75 }}>
+              В централния купол е изписан Христос, а в олтарната част впечатляват композициите „Богородица ширшая“,
+              „Благовещение“ и старозаветни пророци.
+            </Typography>
+          </Box>
+
+          <Box sx={{ border: '1px solid #d8dee8', borderRadius: 2, p: { xs: 2, md: 2.5 }, bgcolor: 'background.paper', borderLeft: '4px solid #22c55e' }}>
+            <Typography variant="h6" sx={{ fontWeight: 700, mb: 1 }}>
+              Музеи и културни институции
+            </Typography>
+            <Typography variant="body2" color="text.secondary" sx={{ lineHeight: 1.75, mb: 0.8 }}>
+              В метоха на църквата "Св. Петка" е разположена експозицията на Общинския исторически музей. Музеят е
+              основан на 22.06.1969 г. със статут на музейна сбирка, а експозицията е в пет зали - археология,
+              възраждане, националноосвободително движение и нова история.
+            </Typography>
+            <Typography variant="body2" color="text.secondary" sx={{ lineHeight: 1.75, mb: 0.8 }}>
+              С пет уникални предмета от праисторията музеят участва в изложбата "Златна Тракия" в Брюксел
+              (03.03.2002 г.), с което Пещера намира своето място в културната история на Европа.
+            </Typography>
+            <Typography variant="body2" color="text.secondary" sx={{ lineHeight: 1.75 }}>
+              Музейна сбирка функционира и в с. Радилово. На територията на общината развиват дейност три читалища, един
+              Дом на културата и картинна галерия "Проф. В. Стайков".
+            </Typography>
+          </Box>
+
+          <Box sx={{ border: '1px solid #d8dee8', borderRadius: 2, p: { xs: 2, md: 2.5 }, bgcolor: 'background.paper', borderLeft: '4px solid #0ea5e9' }}>
+            <Typography variant="h6" sx={{ fontWeight: 700, mb: 1 }}>
+              Личности с принос за България
+            </Typography>
+            <Typography variant="body2" color="text.secondary" sx={{ lineHeight: 1.75, mb: 0.8 }}>
+              Община Пещера дава на България редица политици, общественици и учени - включително 5 министри: Георги
+              Кьосеиванов, Михаил Такев, Георги Теохаров, Григор Чешмеджиев и Никола Стоилов.
+            </Typography>
+            <Typography variant="body2" color="text.secondary" sx={{ lineHeight: 1.75 }}>
+              От Пещерската община израстват един академик, 24 професори, 10 доцента, трима ректори на ВУЗ, един декан
+              и двама зам.-декани, както и изявени личности в историята, медицината, изкуството, спорта и киното.
+            </Typography>
+          </Box>
+        </Stack>
+      ) : isHistoryPage ? (
+        <Stack spacing={2}>
+          <Box
+            sx={{
+              border: '1px solid #d8dee8',
+              borderRadius: 2,
+              p: { xs: 2, md: 2.5 },
+              background: 'linear-gradient(180deg, #f8fafc 0%, #ffffff 100%)',
+              boxShadow: '0 8px 24px rgba(15, 23, 42, 0.06)',
+            }}
+          >
+            <Typography variant="overline" color="text.secondary" sx={{ letterSpacing: 0.7 }}>
+              Община Пещера
+            </Typography>
+            <Typography variant="h5" sx={{ fontWeight: 800, mb: 0.5 }}>
+              История
+            </Typography>
+            <Typography variant="body2" color="text.secondary" sx={{ lineHeight: 1.7 }}>
+              Пещера през вековете - от неолита до Освобождението.
+            </Typography>
+          </Box>
+
+          <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: 'repeat(3, 1fr)' }, gap: 1.5 }}>
+            <Box sx={{ border: '1px solid #d8dee8', borderRadius: 1.5, p: 1.5, bgcolor: '#f8fafc' }}>
+              <Typography variant="caption" color="text.secondary">
+                Начало на селището
+              </Typography>
+              <Typography variant="subtitle1" sx={{ fontWeight: 700 }}>
+                IV в. пр.н.е.
+              </Typography>
+            </Box>
+            <Box sx={{ border: '1px solid #d8dee8', borderRadius: 1.5, p: 1.5, bgcolor: '#f8fafc' }}>
+              <Typography variant="caption" color="text.secondary">
+                Първо светско училище
+              </Typography>
+              <Typography variant="subtitle1" sx={{ fontWeight: 700 }}>
+                1848 г.
+              </Typography>
+            </Box>
+            <Box sx={{ border: '1px solid #d8dee8', borderRadius: 1.5, p: 1.5, bgcolor: '#f8fafc' }}>
+              <Typography variant="caption" color="text.secondary">
+                Освобождение
+              </Typography>
+              <Typography variant="subtitle1" sx={{ fontWeight: 700 }}>
+                06.01.1878 г.
+              </Typography>
+            </Box>
+          </Box>
+
+          <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', lg: '1fr 1fr' }, gap: 2 }}>
+            {historySections.map((section) => (
+              <Box
+                key={section.title}
+                sx={{
+                  border: '1px solid #d8dee8',
+                  borderRadius: 2,
+                  p: 2,
+                  bgcolor: 'background.paper',
+                  borderLeft: '4px solid #94a3b8',
+                }}
+              >
+                <Typography variant="subtitle1" sx={{ fontWeight: 700, mb: 0.8 }}>
+                  {section.title}
+                </Typography>
+                <Typography variant="body2" color="text.secondary" sx={{ lineHeight: 1.75 }}>
+                  {section.text}
+                </Typography>
+              </Box>
+            ))}
+          </Box>
+
+          <Box sx={{ border: '1px solid #d8dee8', borderRadius: 2, p: { xs: 2, md: 2.5 }, bgcolor: 'background.paper', borderLeft: '4px solid #64748b' }}>
+            <Typography variant="h6" sx={{ fontWeight: 700, mb: 1 }}>
+              Просвета и възрожденски дейци
+            </Typography>
+            <Typography variant="body2" color="text.secondary" sx={{ lineHeight: 1.75, mb: 0.8 }}>
+              Първото светско българско училище в Пещера е създадено през 1848 г., а читалището "Надежда" - през 1873 г.
+              Изтъкнат възрожденски учител е Спас Зафиров - учител на Иван Вазов, Христо Ботев и Васил Левски.
+            </Typography>
+            <Typography variant="body2" color="text.secondary" sx={{ lineHeight: 1.75 }}>
+              В хайдушката чета на Тодор Банчев стават хайдути от Пещера - Тодор Фиданов, Сотир Келеш и Динко.
+            </Typography>
+          </Box>
+
+          <Box sx={{ border: '1px solid #d8dee8', borderRadius: 2, p: { xs: 2, md: 2.5 }, bgcolor: 'background.paper', borderLeft: '4px solid #0ea5e9' }}>
+            <Typography variant="h6" sx={{ fontWeight: 700, mb: 1 }}>
+              Национално-освободителна борба и Освобождение
+            </Typography>
+            <Typography variant="body2" color="text.secondary" sx={{ lineHeight: 1.75, mb: 0.8 }}>
+              В национално-освободителната борба Пещера дава на България Димитър и Атанас Горови и Георги Зафиров.
+              В Опълчението участват от Пещера: Нешо Чипев, Никола М. Донски и Георги Стоилов.
+            </Typography>
+            <Typography variant="body2" color="text.secondary" sx={{ lineHeight: 1.75 }}>
+              Пещера е освободена в Руско-турската освободителна война на 06.01.1878 г. от 17-та рота на поручик
+              Панин, а за гарнизон в Пещера остава VIII-ма рота на к-н Сафонов от 123-ти Козловски полк.
+            </Typography>
+          </Box>
+        </Stack>
+      ) : isGeoLocationPage ? (
+        <Stack spacing={2}>
+          <Box
+            sx={{
+              border: '1px solid #d8dee8',
+              borderRadius: 2,
+              p: { xs: 2, md: 2.5 },
+              background: 'linear-gradient(180deg, #f8fafc 0%, #ffffff 100%)',
+              boxShadow: '0 8px 24px rgba(15, 23, 42, 0.06)',
+            }}
+          >
+            <Typography variant="overline" color="text.secondary" sx={{ letterSpacing: 0.7 }}>
+              Община Пещера
+            </Typography>
+            <Typography variant="h5" sx={{ fontWeight: 800, mb: 0.5 }}>
+              Географско местоположение
+            </Typography>
+            <Typography variant="body2" color="text.secondary" sx={{ lineHeight: 1.7 }}>
+              Ключови характеристики за територия, релеф, свързаност и природни ресурси.
+            </Typography>
+          </Box>
+
+          <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: 'repeat(4, 1fr)' }, gap: 1.5 }}>
+            <Box sx={{ border: '1px solid #d8dee8', borderRadius: 1.5, p: 1.25, bgcolor: '#f8fafc' }}>
+              <Typography variant="caption" color="text.secondary">
+                Площ
+              </Typography>
+              <Typography variant="subtitle2" sx={{ fontWeight: 700 }}>
+                17 472 ха
+              </Typography>
+            </Box>
+            <Box sx={{ border: '1px solid #d8dee8', borderRadius: 1.5, p: 1.25, bgcolor: '#f8fafc' }}>
+              <Typography variant="caption" color="text.secondary">
+                Н.в. Пещера
+              </Typography>
+              <Typography variant="subtitle2" sx={{ fontWeight: 700 }}>
+                450-461 м
+              </Typography>
+            </Box>
+            <Box sx={{ border: '1px solid #d8dee8', borderRadius: 1.5, p: 1.25, bgcolor: '#f8fafc' }}>
+              <Typography variant="caption" color="text.secondary">
+                Горски фонд
+              </Typography>
+              <Typography variant="subtitle2" sx={{ fontWeight: 700 }}>
+                около 40%
+              </Typography>
+            </Box>
+            <Box sx={{ border: '1px solid #d8dee8', borderRadius: 1.5, p: 1.25, bgcolor: '#f8fafc' }}>
+              <Typography variant="caption" color="text.secondary">
+                Разстояние до София
+              </Typography>
+              <Typography variant="subtitle2" sx={{ fontWeight: 700 }}>
+                125 км
+              </Typography>
+            </Box>
+          </Box>
+
+          <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', lg: '1fr 1fr' }, gap: 2 }}>
+            {geoSections.map((section) => (
+              <Box
+                key={section.title}
+                sx={{
+                  border: '1px solid #d8dee8',
+                  borderRadius: 2,
+                  p: 2,
+                  bgcolor: 'background.paper',
+                  borderLeft: '4px solid #38bdf8',
+                }}
+              >
+                <Typography variant="subtitle1" sx={{ fontWeight: 700, mb: 0.8 }}>
+                  {section.title}
+                </Typography>
+                <Typography variant="body2" color="text.secondary" sx={{ lineHeight: 1.75 }}>
+                  {section.text}
+                </Typography>
+              </Box>
+            ))}
+          </Box>
+
+          <Box sx={{ border: '1px solid #d8dee8', borderRadius: 2, p: { xs: 2, md: 2.5 }, bgcolor: 'background.paper', borderLeft: '4px solid #0ea5e9' }}>
+            <Typography variant="h6" sx={{ fontWeight: 700, mb: 1 }}>
+              Климат
+            </Typography>
+            <Typography variant="body2" color="text.secondary" sx={{ lineHeight: 1.75, mb: 0.8 }}>
+              Климатът в общината е умерен, без резки температурни колебания. Средната надморска височина на град
+              Пещера е 461 м.
+            </Typography>
+            <Typography variant="body2" color="text.secondary" sx={{ lineHeight: 1.75 }}>
+              Средната годишна температура е 12.6oС. Валежите са сравнително добри - от 670 до 680 л/кв.м. годишно.
+            </Typography>
+          </Box>
+
+          <Box sx={{ border: '1px solid #d8dee8', borderRadius: 2, p: { xs: 2, md: 2.5 }, bgcolor: 'background.paper', borderLeft: '4px solid #16a34a' }}>
+            <Typography variant="h6" sx={{ fontWeight: 700, mb: 1 }}>
+              Водни ресурси
+            </Typography>
+            <Typography variant="body2" color="text.secondary" sx={{ lineHeight: 1.75, mb: 0.8 }}>
+              На територията на общината съществуват осем гравитачни извора с минимален дебит 20 л/с и максимален
+              дебит 42 л/с, сондажни кладенци с дебит 30 л/с и един карстов извор с дебит 12 - 30 л/с.
+            </Typography>
+            <Typography variant="body2" color="text.secondary" sx={{ lineHeight: 1.75 }}>
+              Водните ресурси в Община Пещера са достатъчни за 100% водоснабдяване на населението, което е осъществено.
+            </Typography>
+          </Box>
+        </Stack>
+      ) : isMunicipalEnterprisesPage ? (
+        <Stack spacing={2}>
+          <Box
+            sx={{
+              border: '1px solid #d8dee8',
+              borderRadius: 2,
+              p: { xs: 2, md: 2.5 },
+              bgcolor: '#f8fafc',
+              boxShadow: '0 8px 24px rgba(15, 23, 42, 0.06)',
+            }}
+          >
+            <Typography variant="overline" color="text.secondary" sx={{ letterSpacing: 0.7 }}>
+              Контакти → Връзка с нас
+            </Typography>
+            <Typography variant="h5" sx={{ fontWeight: 800, mb: 0.5 }}>
+              Общински предприятия и фирми
+            </Typography>
+            <Typography variant="body2" color="text.secondary">
+              ТЕЛЕФОНЕН УКАЗАТЕЛ на Общинските предприятия и фирми в община Пещера
+            </Typography>
+          </Box>
+
+          <Box sx={{ border: '1px solid #d8dee8', borderRadius: 2, overflow: 'hidden', bgcolor: 'background.paper' }}>
+            <Box sx={{ overflowX: 'auto' }}>
+              <Box component="table" sx={{ width: '100%', borderCollapse: 'collapse', minWidth: 660 }}>
+                <Box component="thead" sx={{ bgcolor: '#f8fafc' }}>
+                  <Box component="tr">
+                    <Box component="th" sx={{ p: 1.25, borderBottom: '1px solid #e2e8f0', textAlign: 'left', width: 70 }}>
+                      №
+                    </Box>
+                    <Box component="th" sx={{ p: 1.25, borderBottom: '1px solid #e2e8f0', textAlign: 'left' }}>
+                      Предприятие / фирма
+                    </Box>
+                    <Box component="th" sx={{ p: 1.25, borderBottom: '1px solid #e2e8f0', textAlign: 'left', width: 180 }}>
+                      Телефон
+                    </Box>
+                  </Box>
+                </Box>
+                <Box component="tbody">
+                  {municipalEnterprises.map((row) => (
+                    <Box component="tr" key={row.idx}>
+                      <Box component="td" sx={{ p: 1.1, borderBottom: '1px solid #f1f5f9', verticalAlign: 'top' }}>
+                        {row.idx}
+                      </Box>
+                      <Box component="td" sx={{ p: 1.1, borderBottom: '1px solid #f1f5f9', verticalAlign: 'top' }}>
+                        {row.name}
+                      </Box>
+                      <Box component="td" sx={{ p: 1.1, borderBottom: '1px solid #f1f5f9', verticalAlign: 'top' }}>
+                        <Link href={`tel:${row.phone.replace(/[^\d+]/g, '')}`} underline="hover" sx={{ fontWeight: 600 }}>
+                          {row.phone}
+                        </Link>
+                      </Box>
+                    </Box>
+                  ))}
+                </Box>
+              </Box>
+            </Box>
+          </Box>
+        </Stack>
+      ) : isBankAccountsPage ? (
+        <Stack spacing={2}>
+          <Box
+            sx={{
+              border: '1px solid #d8dee8',
+              borderRadius: 2,
+              p: { xs: 2, md: 2.5 },
+              bgcolor: '#f8fafc',
+              boxShadow: '0 8px 24px rgba(15, 23, 42, 0.06)',
+            }}
+          >
+            <Typography variant="overline" color="text.secondary" sx={{ letterSpacing: 0.7 }}>
+              Общинска администрация
+            </Typography>
+            <Typography variant="h5" sx={{ fontWeight: 800, mb: 0.5 }}>
+              Банкови сметки
+            </Typography>
+            <Typography variant="body2" color="text.secondary">
+              БУЛСТАТ: 000351750
+            </Typography>
+          </Box>
+
+          <Box sx={{ border: '1px solid #d8dee8', borderRadius: 2, p: { xs: 2, md: 2.5 }, bgcolor: 'background.paper' }}>
+            <Typography variant="subtitle1" sx={{ fontWeight: 700, mb: 1 }}>
+              Плащане на местни данъци и такси, услуги по съответен вид плащане
+            </Typography>
+            <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1.2} alignItems={{ xs: 'flex-start', sm: 'center' }}>
+              <Typography variant="body1" sx={{ fontWeight: 600 }}>
+                IBAN: BG06SOMB91308432970244
+              </Typography>
+              <Button size="small" variant="outlined" onClick={() => copyToClipboard('BG06SOMB91308432970244', 'IBAN за местни данъци и такси')}>
+                Копирай
+              </Button>
+            </Stack>
+          </Box>
+
+          <Box sx={{ border: '1px solid #d8dee8', borderRadius: 2, p: { xs: 2, md: 2.5 }, bgcolor: 'background.paper' }}>
+            <Typography variant="subtitle1" sx={{ fontWeight: 700, mb: 1 }}>
+              За депозити и гаранции
+            </Typography>
+            <Stack spacing={1.2}>
+              <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1.2} alignItems={{ xs: 'flex-start', sm: 'center' }}>
+                <Typography variant="body1" sx={{ fontWeight: 600 }}>
+                  IBAN: BG87SOMB91303332970201
+                </Typography>
+                <Button size="small" variant="outlined" onClick={() => copyToClipboard('BG87SOMB91303332970201', 'IBAN за депозити и гаранции')}>
+                  Копирай
+                </Button>
+              </Stack>
+              <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1.2} alignItems={{ xs: 'flex-start', sm: 'center' }}>
+                <Typography variant="body1" sx={{ fontWeight: 600 }}>
+                  BIC: SOMBBGSF (Общинска банка / Municipal Bank)
+                </Typography>
+                <Button size="small" variant="outlined" onClick={() => copyToClipboard('SOMBBGSF', 'BIC')}>
+                  Копирай
+                </Button>
+              </Stack>
+            </Stack>
+            {copyFeedback ? (
+              <Typography variant="caption" color="primary" sx={{ mt: 1.25, display: 'block', fontWeight: 600 }}>
+                {copyFeedback}
+              </Typography>
+            ) : null}
+          </Box>
+        </Stack>
       ) : isMayorPage ? (
         <Box
           sx={{
@@ -1373,26 +4221,7 @@ Copyright © 2004 - 2026 Община Пещера - Официален сайт
         </>
       )}
 
-      <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1.5} sx={{ mt: 3, flexWrap: 'wrap' }}>
-        {mirrorEntry?.sourceUrl ? (
-          <Button variant="contained" href={mirrorEntry.sourceUrl} target="_blank" rel="noopener noreferrer" size="medium">
-            Оригинална страница (официален сайт)
-          </Button>
-        ) : (
-          <Button variant="contained" href={OFFICIAL_SITE} target="_blank" rel="noopener noreferrer" size="medium">
-            Към www.peshtera.bg
-          </Button>
-        )}
-        <Button variant="outlined" href={OFFICIAL_SITE} target="_blank" rel="noopener noreferrer" size="medium">
-          Начало на официалния портал
-        </Button>
-        <Button variant="outlined" href={OFFICIAL_SITEMAP_URL} target="_blank" rel="noopener noreferrer" size="medium">
-          Карта на сайта (официална)
-        </Button>
-        <Button component={RouterLink} to="/karta-na-saita" variant="outlined" size="medium">
-          Карта в този портал
-        </Button>
-      </Stack>
+      
     </Container>
   );
 }

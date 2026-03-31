@@ -31,13 +31,17 @@ function NavList({ items, depth = 0, onNavigate }) {
 
 function NavRow({ item, depth, onNavigate }) {
   const [open, setOpen] = useState(depth < 1);
-  const hasChildren = item.children?.length > 0;
+  const hasChildren = item.children?.length > 0 && item.id !== 'gallery';
+  const externalUrl = item.externalUrl;
 
   if (!hasChildren) {
     return (
       <ListItemButton
-        component={RouterLink}
-        to={navLinkTo(item)}
+        component={externalUrl ? 'a' : RouterLink}
+        to={externalUrl ? undefined : navLinkTo(item)}
+        href={externalUrl}
+        target={externalUrl ? '_blank' : undefined}
+        rel={externalUrl ? 'noopener noreferrer' : undefined}
         sx={{
           pl: 2 + depth * 2,
           py: 1.25,
@@ -71,18 +75,6 @@ function NavRow({ item, depth, onNavigate }) {
       </ListItemButton>
       <Collapse in={open} timeout="auto" unmountOnExit>
         <NavList items={item.children} depth={depth + 1} onNavigate={onNavigate} />
-        <ListItemButton
-          component={RouterLink}
-          to={item.path}
-          sx={{ pl: 4 + depth * 2, bgcolor: pz.topBarBg, borderBottom: `1px solid ${pz.borderFooter}` }}
-          onClick={onNavigate}
-        >
-          <ListItemText
-            primary={`Към „${item.label}“`}
-            secondary="Главна страница на раздела"
-            primaryTypographyProps={{ variant: 'body2', fontWeight: 600, color: pz.navGreen }}
-          />
-        </ListItemButton>
       </Collapse>
     </Box>
   );

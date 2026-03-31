@@ -1,30 +1,20 @@
-/**
- * Снимки за начален каросел (Unsplash — свободни за ползване).
- * При продукция заменете с официални снимки на община Пещера.
- */
 export const heroCarouselSlides = [
   {
-    src: 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=1920&q=80',
-    alt: 'Планински пейзаж и природа',
-    title: 'Родопска природа',
-    subtitle: 'Община Пещера в сърцето на Родопите',
+    src: '/hero-peshtera-monument.png',
+    alt: 'Паметен монумент в Пещера',
+    title: 'Добре дошли в Пещера',
+    subtitle: 'Модерен общински портал за услуги, информация и новини',
   },
   {
-    src: 'https://images.unsplash.com/photo-1449824913935-59a10b8d2000?auto=format&fit=crop&w=1920&q=80',
-    alt: 'Градска среда и архитектура',
-    title: 'Съвременно общинско управление',
-    subtitle: 'Информация, услуги и прозрачност за гражданите',
+    src: '/hero-peristera.png',
+    alt: 'Крепост Перистера',
+    title: 'Крепост Перистера',
+    subtitle: 'Историческо наследство и културен символ на общината',
   },
   {
-    src: 'https://images.unsplash.com/photo-1499678329028-101765496a0a?auto=format&fit=crop&w=1920&q=80',
-    alt: 'Пейзаж с хълмове и селище',
-    title: 'Общност и развитие',
-    subtitle: 'Проекти, култура и устойчиво бъдеще',
-  },
-  {
-    src: 'https://images.unsplash.com/photo-1569949381669-ecf31ae8e613?auto=format&fit=crop&w=1920&q=80',
-    alt: 'Градски площад и сгради',
-    title: 'Община Пещера',
-    subtitle: 'Официален информационен портал',
+    src: '/culture-hero-town.png',
+    alt: 'Панорамна гледка към Пещера',
+    title: 'Култура и общност',
+    subtitle: 'Съхраняваме местната памет и развиваме бъдещето',
   },
 ];

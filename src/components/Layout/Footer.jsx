@@ -1,6 +1,6 @@
 import { Box, Container, Divider, Grid, Link, Stack, Typography } from '@mui/material';
 import { Link as RouterLink } from 'react-router-dom';
-import { hotline, OFFICIAL_SITE } from '../../data/navigation';
+import { hotline } from '../../data/navigation';
 import { pz, pzFooterGradient } from '../../theme/pazardzhikPalette';
 
 export default function Footer() {
@@ -90,27 +90,7 @@ export default function Footer() {
               >
                 Връзки
               </Typography>
-              <Link
-                href={OFFICIAL_SITE}
-                target="_blank"
-                rel="noopener noreferrer"
-                underline="hover"
-                sx={{ color: pz.textOnDarkMuted, display: 'block', mb: 1, '&:hover': { color: pz.white } }}
-              >
-                Към настоящия официален сайт www.peshtera.bg
-              </Link>
               <Typography variant="body2">
-                <Link
-                  component={RouterLink}
-                  to="/karta-na-saita"
-                  underline="hover"
-                  sx={{ color: pz.accentGold, fontWeight: 600, '&:hover': { color: pz.white } }}
-                >
-                  Карта на сайта
-                </Link>
-                <Typography component="span" sx={{ mx: 1, color: 'rgba(255,255,255,0.4)' }}>
-                  |
-                </Typography>
                 <Link
                   component={RouterLink}
                   to="/kontakti"

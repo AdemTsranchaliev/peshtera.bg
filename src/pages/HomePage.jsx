@@ -11,7 +11,6 @@ import {
 } from '@mui/material';
 import { Link as RouterLink } from 'react-router-dom';
 import { sampleNews } from '../data/news';
-import { OFFICIAL_SITE } from '../data/navigation';
 import { heroCarouselSlides } from '../data/heroCarousel';
 import { pz } from '../theme/pazardzhikPalette';
 import {
@@ -403,17 +402,7 @@ export default function HomePage() {
             <Typography variant="body2" color="text.secondary" sx={{ lineHeight: 1.75 }}>
               Община Пещера развива партньорства с институции, неправителствени организации и други общини в областта на
               образованието, социалните услуги, околната среда и регионалното развитие. Актуални споразумения и проекти се
-              публикуват в разделите за стратегически документи и проекти, както и на{' '}
-              <Box
-                component="a"
-                href={OFFICIAL_SITE}
-                target="_blank"
-                rel="noopener noreferrer"
-                sx={{ color: pz.navGreen, fontWeight: 600 }}
-              >
-                официалния сайт www.peshtera.bg
-              </Box>
-              .
+              публикуват в разделите за стратегически документи и проекти.
             </Typography>
           </Grid>
           <Grid item xs={12} md={5}>

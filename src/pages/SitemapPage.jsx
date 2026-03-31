@@ -2,7 +2,6 @@ import { Box, Container, Link, List, ListItem, Typography } from '@mui/material'
 import { Link as RouterLink } from 'react-router-dom';
 import { flattenNav, navTree } from '../data/navigation';
 import { navLinkTo } from '../utils/navLinkTo';
-import { OFFICIAL_SITEMAP_URL } from '../data/siteContent';
 
 function SitemapBranch({ items, depth = 0 }) {
   return (
@@ -59,15 +58,7 @@ export default function SitemapPage() {
         Карта на сайта
       </Typography>
       <Typography variant="body1" color="text.secondary" sx={{ mb: 2, lineHeight: 1.7 }}>
-        Йерархия по структурата на{' '}
-        <Link href="https://www.peshtera.bg/" target="_blank" rel="noopener noreferrer">
-          www.peshtera.bg
-        </Link>{' '}
-        и{' '}
-        <Link href={OFFICIAL_SITEMAP_URL} target="_blank" rel="noopener noreferrer">
-          официалната карта (xmap)
-        </Link>
-        . Всички вътрешни страници съдържат резюме; пълните материали са на официалния портал.
+        Йерархия на страниците в този портал. Тук можете бързо да намерите раздел, подстраница или полезна връзка.
       </Typography>
       <Box component="section" aria-labelledby="tree-heading" sx={{ mb: 4 }}>
         <Typography id="tree-heading" variant="h6" sx={{ mb: 1.5, fontWeight: 700 }}>
