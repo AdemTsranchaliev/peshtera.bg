@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "scrape:municipality": "node scripts/scrape-municipality.mjs"
   },
   "dependencies": {
     "@emotion/react": "^11.14.0",
