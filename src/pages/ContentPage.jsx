@@ -28,6 +28,7 @@ const mirrorSx = {
 
 export default function ContentPage() {
   const { pathname } = useLocation();
+  const asset = (file) => `${import.meta.env.BASE_URL}${file}`;
   const electionsPages = [
     {
       slug: 'chastichni-mestni-izbori-2025-kapitan-dimitrievo',
@@ -237,7 +238,7 @@ export default function ContentPage() {
     office: 'Общински съвет - Пещера',
     phoneFax: '0350 62206',
     email: 'chairman@peshtera.bg',
-    image: '/vf-chairman.png',
+    image: asset('vf-chairman.png'),
     electionInfo:
       'Общинският съвет избира от своя състав председател на съвета. Изборът се провежда с тайно гласуване. За избран се смята кандидатът, който е получил повече от половината от гласовете от общия брой на съветниците.',
     deputiesInfo:
@@ -300,7 +301,7 @@ export default function ContentPage() {
       reception: 'всяка сряда от 14.30 часа до 17.00 часа',
       scope:
         'Заместник-кмет: финанси и човешки ресурси, европейски фондове и обществени поръчки, МКБППМН, Общинско предприятие „Обредни дейности”, трудова заетост и подпомагане, Клубове на инвалида и Клуб на пенсионера), звено Крепост „Перистера”, координация с органите на полицията и съдебната система. Ръководи, координира и контролира дейността на екипите за управление на проекти.',
-      image: '/galabina-karamitreva.png',
+      image: asset('galabina-karamitreva.png'),
     },
     {
       name: 'Заместник-кмет (териториално и селищно устройство)',
@@ -345,7 +346,7 @@ export default function ContentPage() {
       address: 'ул. Георги Димитров 33',
       phone: '035592327',
       email: 'n.todorova@peshtera.bg',
-      image: '/nansi-todorova.png',
+      image: asset('nansi-todorova.png'),
     },
     {
       name: 'Кметски наместник на с. Свети Константин',
@@ -381,7 +382,7 @@ export default function ContentPage() {
     'Изпълнява функции, възложени му от кмета на общината.',
   ];
   const structure = {
-    image: '/struktura-admin.png',
+    image: asset('struktura-admin.png'),
     regulationTitle: 'УСТРОЙСТВЕН ПРАВИЛНИК НА ОБЩИНСКА АДМИНИСТРАЦИЯ',
     ethicsPdf: 'https://www.peshtera.bg/attachments/article/4/etichen%20kodeks.pdf',
   };
@@ -493,20 +494,20 @@ export default function ContentPage() {
     },
   ];
   const cultureGallery = [
-    { src: '/culture-chitalishte-razvitie.png', title: 'Читалище „Развитие“' },
-    { src: '/culture-sv-dimitar-front.png', title: 'Църквата „Св. Димитър“ (екстериор)' },
-    { src: '/culture-sv-dimitar-interior.png', title: 'Църквата „Св. Димитър“ (интериор)' },
-    { src: '/culture-museum-yard.png', title: 'Музеен комплекс (метохът на „Св. Петка“)' },
+    { src: asset('culture-chitalishte-razvitie.png'), title: 'Читалище „Развитие“' },
+    { src: asset('culture-sv-dimitar-front.png'), title: 'Църквата „Св. Димитър“ (екстериор)' },
+    { src: asset('culture-sv-dimitar-interior.png'), title: 'Църквата „Св. Димитър“ (интериор)' },
+    { src: asset('culture-museum-yard.png'), title: 'Музеен комплекс (метохът на „Св. Петка“)' },
   ];
   const portalGallery = [
-    { src: '/hero-peshtera-monument.png', title: 'Паметен монумент „Пещера“', category: 'Забележителности' },
-    { src: '/hero-peristera.png', title: 'Крепост Перистера', category: 'Забележителности' },
-    { src: '/culture-hero-town.png', title: 'Панорама на град Пещера', category: 'Пейзажи' },
-    { src: '/culture-chitalishte-razvitie.png', title: 'Читалище „Развитие“', category: 'Култура' },
-    { src: '/culture-sv-dimitar-front.png', title: 'Църква „Св. Димитър“', category: 'Култура' },
-    { src: '/culture-sv-dimitar-interior.png', title: 'Интериор на „Св. Димитър“', category: 'Култура' },
-    { src: '/culture-museum-yard.png', title: 'Музеен комплекс', category: 'Култура' },
-    { src: '/logo-peshtera.png', title: 'Символ на общината', category: 'Символи' },
+    { src: asset('hero-peshtera-monument.png'), title: 'Паметен монумент „Пещера“', category: 'Забележителности' },
+    { src: asset('hero-peristera.png'), title: 'Крепост Перистера', category: 'Забележителности' },
+    { src: asset('culture-hero-town.png'), title: 'Панорама на град Пещера', category: 'Пейзажи' },
+    { src: asset('culture-chitalishte-razvitie.png'), title: 'Читалище „Развитие“', category: 'Култура' },
+    { src: asset('culture-sv-dimitar-front.png'), title: 'Църква „Св. Димитър“', category: 'Култура' },
+    { src: asset('culture-sv-dimitar-interior.png'), title: 'Интериор на „Св. Димитър“', category: 'Култура' },
+    { src: asset('culture-museum-yard.png'), title: 'Музеен комплекс', category: 'Култура' },
+    { src: asset('logo-peshtera.png'), title: 'Символ на общината', category: 'Символи' },
   ];
   const educationInfra = [
     { idx: 1, type: 'ОДЗ', count: 3 },
@@ -2985,7 +2986,7 @@ Copyright © 2004 - 2026 Община Пещера - Официален сайт
               <Box sx={{ borderRadius: 2, overflow: 'hidden', border: '1px solid #cbd5e1' }}>
                 <Box
                   component="img"
-                  src="/culture-hero-town.png"
+                  src={asset('culture-hero-town.png')}
                   alt="Панорамна гледка към град Пещера"
                   sx={{ width: '100%', height: 180, objectFit: 'cover', display: 'block' }}
                 />
@@ -3463,7 +3464,7 @@ Copyright © 2004 - 2026 Община Пещера - Официален сайт
             <Box sx={{ p: 2.5, minWidth: { md: 300 }, maxWidth: { md: 340 }, bgcolor: '#f8fafc' }}>
               <Box
                 component="img"
-                src="/jordan-mladenov.png"
+                src={asset('jordan-mladenov.png')}
                 alt={mayor.name}
                 sx={{
                   width: '100%',

@@ -148,7 +148,7 @@ export default function MainLayout() {
                   >
                     <Box
                       component="img"
-                      src="/logo-peshtera.png"
+                      src={`${import.meta.env.BASE_URL}logo-peshtera.png`}
                       alt="Герб на Община Пещера"
                       sx={{
                         width: 56,
